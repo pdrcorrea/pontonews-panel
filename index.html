@@ -16,14 +16,22 @@
         radial-gradient(1400px 1100px at 50% 55%, #0a2232 0%, #081423 62%, #040a0f 100%);
   --chipText:#0f172a;
   --chipBg: rgba(255,255,255,.90);
-  --chipBgSoft: rgba(255,255,255,.16);
   --ink:#0b1220;
+
+  /* fundo do hero quando não há imagem / está carregando */
+  --heroFallback:
+    radial-gradient(900px 600px at 20% 15%, rgba(87,184,231,.20), rgba(0,0,0,0) 60%),
+    radial-gradient(800px 500px at 80% 85%, rgba(52,198,208,.16), rgba(0,0,0,0) 65%),
+    linear-gradient(180deg, #0b1f2d 0%, #07111a 70%, #04070b 100%);
 }
 
 *{box-sizing:border-box}
-html,body{height:100%}
-body{
+html,body{
+  height:100%;
   margin:0;
+  overflow:hidden; /* remove "barra" ao F11 (evita scroll/overflow) */
+}
+body{
   font-family:Inter,system-ui;
   background:var(--bg);
   display:grid;
@@ -41,9 +49,7 @@ body{
   box-shadow:0 18px 60px rgba(2,10,23,.18);
   display:flex;
   flex-direction:column;
-  animation:fade .7s ease forwards;
 }
-@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
 
 /* ===== HEADER ===== */
 .header{
@@ -72,7 +78,6 @@ body{
   letter-spacing:.14em;
   opacity:.9;
 }
-
 .h-right{text-align:right}
 .clock{
   font-size:clamp(42px, 4.2vw, 52px);
@@ -94,7 +99,7 @@ body{
 }
 .substrip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
-/* badge Online/Offline agora fica aqui */
+/* badge Online/Offline */
 .status{
   display:inline-flex;
   align-items:center;
@@ -119,9 +124,29 @@ body{
 }
 
 /* ===== HERO ===== */
-.hero{position:relative;flex:1;overflow:hidden;}
-.hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-.overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.86));}
+.hero{
+  position:relative;
+  flex:1;
+  overflow:hidden;
+  background:var(--heroFallback); /* fallback contrastante */
+}
+
+/* imagem sempre absoluta, não "empurra" layout */
+.hero img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* overlay: garante contraste MESMO sem imagem */
+.overlay{
+  position:absolute;
+  inset:0;
+  background:
+    linear-gradient(180deg, rgba(0,0,0,.15) 0%, rgba(0,0,0,.35) 35%, rgba(0,0,0,.82) 100%);
+}
 
 .content{
   position:absolute;
@@ -140,7 +165,7 @@ body{
   text-shadow:0 10px 28px rgba(0,0,0,.35);
 }
 
-/* ===== META BADGES (Fonte/Data) ===== */
+/* ===== META BADGES ===== */
 .meta{
   margin-top:clamp(10px, 1.2vw, 14px);
   display:flex;
@@ -160,19 +185,15 @@ body{
   gap:10px;
 }
 
-/* novo: ícone circular antes do nome da fonte */
+/* Ícone circular da fonte usando background-image (não vaza pra manchete) */
 .sourceIcon{
-  width:26px;height:26px;
-  border-radius:999px;
+  width:26px;height:26px;border-radius:999px;
   background:rgba(15,23,42,.10);
-  display:grid;
-  place-items:center;
-  overflow:hidden;
-}
-.sourceIcon img{
-  width:18px;height:18px;
-  object-fit:contain;
-  display:block;
+  display:inline-block;
+  background-size:18px 18px;
+  background-repeat:no-repeat;
+  background-position:center;
+  flex:0 0 26px;
 }
 
 /* ===== FOOTER ===== */
@@ -183,16 +204,11 @@ body{
 }
 .footer img{height:22px;opacity:.75}
 
-/* ===== RESPONSIVO DE VERDADE ===== */
+/* ===== RESPONSIVO ===== */
 @media (max-aspect-ratio: 4/5){
   .panel{width:min(980px,96vw)}
   .header{align-items:flex-start}
-  .h-right{margin-top:2px}
   .substrip{flex-wrap:wrap}
-}
-@media (max-width: 720px){
-  .meta{gap:8px}
-  .chip{padding:7px 10px}
 }
 </style>
 </head>
@@ -208,7 +224,6 @@ body{
         <div class="sub">LOCAL • ES • BR</div>
       </div>
     </div>
-
     <div class="h-right">
       <div class="clock" id="clock">--:--</div>
     </div>
@@ -218,15 +233,14 @@ body{
     <span>MANCHETE ATUAL</span>
     <span id="scopeLabel">AGORA • BRASIL</span>
 
-    <!-- Online/Offline veio pra cá -->
-    <span class="status" id="statusBadge">
+    <span class="status">
       <span class="dot" id="dot"></span>
       <span id="statusText">Online</span>
     </span>
   </div>
 
   <div class="hero">
-    <img id="image" alt="Imagem da notícia"/>
+    <img id="image" alt="" />
     <div class="overlay"></div>
 
     <div class="content">
@@ -234,9 +248,7 @@ body{
 
       <div class="meta">
         <div class="chip">
-          <span class="sourceIcon" id="sourceIconWrap">
-            <img id="logo" alt="Ícone da fonte"/>
-          </span>
+          <span class="sourceIcon" id="sourceIcon"></span>
           <span id="source">Fonte</span>
         </div>
 
@@ -252,10 +264,8 @@ body{
 </section>
 
 <script>
-/* ================================
-   CONFIG
-   ================================ */
-const WORKER_URL = "https://pontoview-api.pedrhc258.workers.dev/"; // <-- mantenha o seu link certo
+/* ===== CONFIG ===== */
+const WORKER_URL = "https://pontoview-api.pedrhc258.workers.dev/"; // mantenha seu link real
 
 const FEEDS = [
   { name: "Agência Brasil", url: "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml" },
@@ -263,10 +273,10 @@ const FEEDS = [
 ];
 
 const SAFE_MODE = 1;
-const WORKER_TTL_HOURS = 6;      // cache no Worker
-const UI_REFRESH_HOURS = 6;      // recarrega lista no painel
+const WORKER_TTL_HOURS = 6;
+const UI_REFRESH_HOURS = 6;
 const ITEMS_PER_FEED = 18;
-const ROTATE_EVERY_MS = 15000;   // 15s por manchete
+const ROTATE_EVERY_MS = 15000;
 const MAX_ITEMS = 40;
 
 const FALLBACK_IMG =
@@ -278,7 +288,7 @@ setInterval(() => {
   clock.textContent = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }, 1000);
 
-/* ===== ONLINE / OFFLINE (badge no substrip) ===== */
+/* ===== ONLINE/OFFLINE ===== */
 const statusText = document.getElementById("statusText");
 const dot = document.getElementById("dot");
 function updateStatus() {
@@ -294,7 +304,7 @@ window.addEventListener("online", updateStatus);
 window.addEventListener("offline", updateStatus);
 updateStatus();
 
-/* ===== IMAGE PROXY (hotlink/cors) ===== */
+/* ===== IMAGE PROXY ===== */
 function proxy(url) {
   if (!url) return null;
   let clean = String(url).trim();
@@ -303,15 +313,6 @@ function proxy(url) {
   if (clean.includes("wsrv.nl/?url=")) return clean;
   return "https://wsrv.nl/?url=" + encodeURIComponent(clean) + "&w=1600&fit=cover&output=webp";
 }
-
-/* ===== DOM ===== */
-const titleEl = document.getElementById("title");
-const sourceEl = document.getElementById("source");
-const imgEl = document.getElementById("image");
-const logoEl = document.getElementById("logo");
-const sourceIconWrap = document.getElementById("sourceIconWrap");
-const dateEl = document.getElementById("date");
-const scopeLabelEl = document.getElementById("scopeLabel");
 
 /* ===== HELPERS ===== */
 function fmtPublished(iso) {
@@ -336,8 +337,7 @@ function faviconForLink(link){
 }
 
 function dateMs(v){
-  const d = new Date(v);
-  const t = d.getTime();
+  const t = new Date(v).getTime();
   return Number.isNaN(t) ? 0 : t;
 }
 
@@ -353,25 +353,11 @@ function dedupeByLink(list){
   return out;
 }
 
-function setHeroImage(url) {
-  const finalUrl = proxy(url) || FALLBACK_IMG;
-  imgEl.src = finalUrl;
-  imgEl.onerror = () => {
-    if (imgEl.src !== FALLBACK_IMG) imgEl.src = FALLBACK_IMG;
-  };
-}
-
-/* ===== ROTATION: ordem diferente a cada atualização =====
-   - Seed por "janela": muda a cada UI_REFRESH_HOURS
-   - Persistência: salva offset no localStorage para não recomeçar igual
-*/
 function windowSeed(hours){
   const now = Date.now();
   const bucket = Math.floor(now / (hours * 60 * 60 * 1000));
   return bucket >>> 0;
 }
-
-// PRNG simples (determinístico)
 function mulberry32(seed){
   return function(){
     let t = seed += 0x6D2B79F5;
@@ -380,7 +366,6 @@ function mulberry32(seed){
     return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
   };
 }
-
 function shuffleDeterministic(arr, seed){
   const a = arr.slice();
   const rand = mulberry32(seed);
@@ -390,27 +375,53 @@ function shuffleDeterministic(arr, seed){
   }
   return a;
 }
+function loadIndexFromStorage(total){
+  const key = "pv_news_offset";
+  const raw = Number(localStorage.getItem(key) || 0);
+  return (Number.isFinite(raw) ? raw : 0) % Math.max(1, total);
+}
+function saveIndexToStorage(next){
+  localStorage.setItem("pv_news_offset", String(next >>> 0));
+}
 
-/* ===== FETCH ===== */
+/* ===== DOM ===== */
+const titleEl = document.getElementById("title");
+const sourceEl = document.getElementById("source");
+const dateEl = document.getElementById("date");
+const scopeLabelEl = document.getElementById("scopeLabel");
+const imgEl = document.getElementById("image");
+const sourceIcon = document.getElementById("sourceIcon");
+
+/* ===== render ===== */
+function setHeroImage(url) {
+  const finalUrl = proxy(url) || FALLBACK_IMG;
+
+  // coloca logo de cara (sem flicker)
+  imgEl.src = finalUrl;
+
+  // se falhar, fallback; o fundo do hero (CSS) garante contraste
+  imgEl.onerror = () => {
+    if (imgEl.src !== FALLBACK_IMG) imgEl.src = FALLBACK_IMG;
+  };
+}
+
 async function fetchFromWorker(feed){
   const api =
     `${WORKER_URL}?feed=${encodeURIComponent(feed.url)}` +
-    `&ttlHours=${WORKER_TTL_HOURS}` +
-    `&safe=${SAFE_MODE}` +
-    `&limit=${ITEMS_PER_FEED}`;
+    `&ttlHours=${WORKER_TTL_HOURS}&safe=${SAFE_MODE}&limit=${ITEMS_PER_FEED}`;
 
   const res = await fetch(api, { cache: "no-store" });
   const data = await res.json();
   if (!res.ok || !data || data.ok !== true) throw new Error("Worker inválido");
-  const items = Array.isArray(data.items) ? data.items : [];
 
+  const items = Array.isArray(data.items) ? data.items : [];
   return items.map(it => ({
     title: (it.title || "").trim() || "Notícia",
     link: it.link || "",
     pubDate: it.pubDate || "",
     image: it.image || "",
     sourceName: feed.name,
-    logo: faviconForLink(it.link || "")
+    favicon: faviconForLink(it.link || "")
   }));
 }
 
@@ -420,19 +431,12 @@ let rotateTimer = null;
 
 function renderCurrent(){
   if (!NEWS.length) return;
+
   const item = NEWS[idx % NEWS.length];
   idx++;
 
   titleEl.textContent = item.title;
   sourceEl.textContent = item.sourceName || "Fonte";
-
-  // ícone circular (se não tiver, esconde)
-  if (item.logo){
-    logoEl.src = item.logo;
-    sourceIconWrap.style.display = "grid";
-  } else {
-    sourceIconWrap.style.display = "none";
-  }
 
   const pub = fmtPublished(item.pubDate);
   if (pub){
@@ -443,17 +447,19 @@ function renderCurrent(){
     dateEl.style.display = "none";
   }
 
-  scopeLabelEl.textContent = "AGORA • BRASIL";
-  setHeroImage(item.image);
-}
+  // ícone circular como background (não tem como "vazar")
+  if (item.favicon){
+    sourceIcon.style.display = "inline-block";
+    sourceIcon.style.backgroundImage = `url("${item.favicon}")`;
+  } else {
+    sourceIcon.style.display = "none";
+    sourceIcon.style.backgroundImage = "none";
+  }
 
-function loadIndexFromStorage(total){
-  const key = "pv_news_offset";
-  const raw = Number(localStorage.getItem(key) || 0);
-  return (Number.isFinite(raw) ? raw : 0) % Math.max(1, total);
-}
-function saveIndexToStorage(next){
-  localStorage.setItem("pv_news_offset", String(next >>> 0));
+  scopeLabelEl.textContent = "AGORA • BRASIL";
+
+  setHeroImage(item.image);
+  saveIndexToStorage(idx);
 }
 
 async function loadNews(){
@@ -477,33 +483,25 @@ async function loadNews(){
   if (!all.length){
     titleEl.textContent = "Sem notícias no momento";
     sourceEl.textContent = "Fonte";
-    sourceIconWrap.style.display = "none";
+    sourceIcon.style.display = "none";
     dateEl.style.display = "none";
     setHeroImage(null);
     return;
   }
 
-  // embaralha com seed por janela (muda a cada refresh)
   const seed = windowSeed(UI_REFRESH_HOURS);
   const shuffled = shuffleDeterministic(all, seed);
 
-  // offset persistente para não recomeçar igual (mesmo seed)
   const start = loadIndexFromStorage(shuffled.length);
   NEWS = shuffled;
   idx = start;
 
-  // renderiza agora e já salva o próximo offset
   renderCurrent();
-  saveIndexToStorage(idx);
 
   if (rotateTimer) clearInterval(rotateTimer);
-  rotateTimer = setInterval(() => {
-    renderCurrent();
-    saveIndexToStorage(idx);
-  }, ROTATE_EVERY_MS);
+  rotateTimer = setInterval(renderCurrent, ROTATE_EVERY_MS);
 }
 
-// carga inicial + refresh em horas
 loadNews();
 setInterval(loadNews, UI_REFRESH_HOURS * 60 * 60 * 1000);
 </script>
