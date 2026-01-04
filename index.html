@@ -15,8 +15,11 @@
         radial-gradient(900px 700px at 75% 80%, rgba(52,198,208,.14), rgba(6,18,24,0) 65%),
         radial-gradient(1400px 1100px at 50% 55%, #0a2232 0%, #081423 62%, #040a0f 100%);
   --chipText:#0f172a;
-  --chipBg: rgba(255,255,255,.88);
+  --chipBg: rgba(255,255,255,.90);
+  --chipBgSoft: rgba(255,255,255,.16);
+  --ink:#0b1220;
 }
+
 *{box-sizing:border-box}
 html,body{height:100%}
 body{
@@ -25,45 +28,62 @@ body{
   background:var(--bg);
   display:grid;
   place-items:center;
-  padding:20px;
+  padding:clamp(10px, 1.6vw, 20px);
 }
+
+/* ===== PANEL ===== */
 .panel{
-  width:min(1500px,96vw);
-  height:calc(100vh - 40px);
+  width:min(1500px, 96vw);
+  height:calc(100vh - (clamp(10px, 1.6vw, 20px) * 2));
   background:#fff;
   border-radius:18px;
   overflow:hidden;
   box-shadow:0 18px 60px rgba(2,10,23,.18);
   display:flex;
   flex-direction:column;
+  animation:fade .7s ease forwards;
 }
+@keyframes fade{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+
+/* ===== HEADER ===== */
 .header{
-  padding:14px 22px;
+  padding:clamp(12px, 1.2vw, 14px) clamp(14px, 1.8vw, 22px);
   background:var(--header);
   color:#fff;
   display:flex;
   justify-content:space-between;
   align-items:center;
+  gap:12px;
 }
 .h-left{display:flex;gap:14px;align-items:center}
-.iconBadge{width:44px;height:44px;border-radius:14px;display:grid;place-items:center;background:rgba(255,255,255,.1);}
-.title{font-size:28px;font-weight:900;letter-spacing:.06em}
-.sub{font-size:12px;font-weight:800;letter-spacing:.14em;opacity:.9}
-.h-right{text-align:right}
-.clock{font-size:52px;font-weight:900}
-.status{
-  margin-top:6px;
-  display:inline-flex; align-items:center; gap:8px;
-  padding:6px 12px; border-radius:999px;
-  background:rgba(255,255,255,.14);
-  font-size:12px; font-weight:900;
+.iconBadge{
+  width:44px;height:44px;border-radius:14px;
+  display:grid;place-items:center;
+  background:rgba(255,255,255,.1);
 }
-.dot{width:10px;height:10px;border-radius:50%;background:#22c55e;}
-.off{background:#ef4444}
+.title{
+  font-size:clamp(22px, 2.0vw, 28px);
+  font-weight:900;
+  letter-spacing:.06em;
+}
+.sub{
+  font-size:clamp(10px, .9vw, 12px);
+  font-weight:800;
+  letter-spacing:.14em;
+  opacity:.9;
+}
 
+.h-right{text-align:right}
+.clock{
+  font-size:clamp(42px, 4.2vw, 52px);
+  font-weight:900;
+  line-height:1;
+}
+
+/* ===== SUBSTRIP ===== */
 .substrip{
   background:#f3f7ff;
-  padding:10px 22px;
+  padding:10px clamp(14px, 1.8vw, 22px);
   font-size:12px;
   font-weight:900;
   letter-spacing:.14em;
@@ -73,29 +93,106 @@ body{
   gap:12px;
 }
 .substrip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.diag{letter-spacing:normal;font-weight:800;color:#0f172a;opacity:.75}
 
+/* badge Online/Offline agora fica aqui */
+.status{
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
+  padding:6px 12px;
+  border-radius:999px;
+  background:rgba(15,23,42,.06);
+  color:var(--ink);
+  font-size:12px;
+  font-weight:900;
+  letter-spacing:.02em;
+}
+.dot{
+  width:10px;height:10px;border-radius:50%;
+  background:#22c55e;
+  animation:pulse 1.5s infinite;
+}
+.off{background:#ef4444}
+@keyframes pulse{
+  0%{box-shadow:0 0 0 0 rgba(34,197,94,.45)}
+  70%{box-shadow:0 0 0 10px rgba(34,197,94,0)}
+}
+
+/* ===== HERO ===== */
 .hero{position:relative;flex:1;overflow:hidden;}
 .hero img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;}
-.overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.85));}
-.content{position:absolute;bottom:20px;left:22px;right:22px;color:#fff;}
-.headline{font-size:52px;font-weight:900;line-height:1.08;max-width:1200px;}
-.meta{margin-top:14px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
-.chip{
-  background:var(--chipBg); color:var(--chipText);
-  padding:8px 12px; border-radius:999px;
-  font-size:12px; font-weight:900;
-  display:flex; align-items:center; gap:8px;
+.overlay{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(0,0,0,.86));}
+
+.content{
+  position:absolute;
+  bottom:clamp(14px, 1.8vw, 22px);
+  left:clamp(14px, 1.8vw, 22px);
+  right:clamp(14px, 1.8vw, 22px);
+  color:#fff;
 }
-.chip img{width:18px;height:18px;object-fit:contain;}
-.footer{padding:10px 22px;display:flex;justify-content:flex-end;}
+
+.headline{
+  font-size:clamp(30px, 4.1vw, 56px);
+  font-weight:900;
+  line-height:1.08;
+  max-width: 1400px;
+  text-wrap:balance;
+  text-shadow:0 10px 28px rgba(0,0,0,.35);
+}
+
+/* ===== META BADGES (Fonte/Data) ===== */
+.meta{
+  margin-top:clamp(10px, 1.2vw, 14px);
+  display:flex;
+  gap:10px;
+  flex-wrap:wrap;
+  align-items:center;
+}
+.chip{
+  background:var(--chipBg);
+  color:var(--chipText);
+  padding:8px 12px;
+  border-radius:999px;
+  font-size:12px;
+  font-weight:900;
+  display:inline-flex;
+  align-items:center;
+  gap:10px;
+}
+
+/* novo: ícone circular antes do nome da fonte */
+.sourceIcon{
+  width:26px;height:26px;
+  border-radius:999px;
+  background:rgba(15,23,42,.10);
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+}
+.sourceIcon img{
+  width:18px;height:18px;
+  object-fit:contain;
+  display:block;
+}
+
+/* ===== FOOTER ===== */
+.footer{
+  padding:10px clamp(14px, 1.8vw, 22px);
+  display:flex;
+  justify-content:flex-end;
+}
 .footer img{height:22px;opacity:.75}
 
+/* ===== RESPONSIVO DE VERDADE ===== */
 @media (max-aspect-ratio: 4/5){
-  body{padding:14px}
-  .panel{width:min(920px,96vw)}
-  .headline{font-size:44px}
-  .clock{font-size:46px}
+  .panel{width:min(980px,96vw)}
+  .header{align-items:flex-start}
+  .h-right{margin-top:2px}
+  .substrip{flex-wrap:wrap}
+}
+@media (max-width: 720px){
+  .meta{gap:8px}
+  .chip{padding:7px 10px}
 }
 </style>
 </head>
@@ -111,31 +208,38 @@ body{
         <div class="sub">LOCAL • ES • BR</div>
       </div>
     </div>
+
     <div class="h-right">
       <div class="clock" id="clock">--:--</div>
-      <div class="status">
-        <span class="dot" id="dot"></span>
-        <span id="statusText">Online</span>
-      </div>
     </div>
   </div>
 
   <div class="substrip">
     <span>MANCHETE ATUAL</span>
     <span id="scopeLabel">AGORA • BRASIL</span>
-    <span class="diag" id="diag">Iniciando…</span>
+
+    <!-- Online/Offline veio pra cá -->
+    <span class="status" id="statusBadge">
+      <span class="dot" id="dot"></span>
+      <span id="statusText">Online</span>
+    </span>
   </div>
 
   <div class="hero">
     <img id="image" alt="Imagem da notícia"/>
     <div class="overlay"></div>
+
     <div class="content">
       <div class="headline" id="title">Carregando…</div>
+
       <div class="meta">
         <div class="chip">
-          <img id="logo" alt="Logo da fonte"/>
+          <span class="sourceIcon" id="sourceIconWrap">
+            <img id="logo" alt="Ícone da fonte"/>
+          </span>
           <span id="source">Fonte</span>
         </div>
+
         <div class="chip" id="date"></div>
       </div>
     </div>
@@ -148,99 +252,165 @@ body{
 </section>
 
 <script>
-/* ====== TROQUE AQUI PELO SEU LINK workers.dev ====== */
-const WORKER_URL = "https://pontoview-api.pedrhc258.workers.dev/";
+/* ================================
+   CONFIG
+   ================================ */
+const WORKER_URL = "https://pontoview-api.pedrhc258.workers.dev/"; // <-- mantenha o seu link certo
 
-/* feeds */
 const FEEDS = [
   { name: "Agência Brasil", url: "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml" },
   { name: "Brasil de Fato", url: "https://www.brasildefato.com.br/feed/" }
 ];
 
 const SAFE_MODE = 1;
-const WORKER_TTL_HOURS = 6;
-const UI_REFRESH_HOURS = 6;
+const WORKER_TTL_HOURS = 6;      // cache no Worker
+const UI_REFRESH_HOURS = 6;      // recarrega lista no painel
 const ITEMS_PER_FEED = 18;
-const ROTATE_EVERY_MS = 15000;
-const MAX_ITEMS = 30;
+const ROTATE_EVERY_MS = 15000;   // 15s por manchete
+const MAX_ITEMS = 40;
 
-const FALLBACK_IMG = "https://images.unsplash.com/photo-1504711432869-0df30a7e04ad?auto=format&fit=crop&w=1600&q=70";
+const FALLBACK_IMG =
+  "https://images.unsplash.com/photo-1504711432869-0df30a7e04ad?auto=format&fit=crop&w=1600&q=70";
 
-const titleEl = document.getElementById("title");
-const sourceEl = document.getElementById("source");
-const imgEl = document.getElementById("image");
-const logoEl = document.getElementById("logo");
-const dateEl = document.getElementById("date");
-const diagEl = document.getElementById("diag");
-const scopeLabelEl = document.getElementById("scopeLabel");
-
-/* relógio */
+/* ===== CLOCK ===== */
 const clock = document.getElementById("clock");
 setInterval(() => {
   clock.textContent = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
 }, 1000);
 
-/* online/offline */
+/* ===== ONLINE / OFFLINE (badge no substrip) ===== */
 const statusText = document.getElementById("statusText");
 const dot = document.getElementById("dot");
 function updateStatus() {
-  if (navigator.onLine) { statusText.textContent = "Online"; dot.classList.remove("off"); }
-  else { statusText.textContent = "Offline"; dot.classList.add("off"); }
+  if (navigator.onLine) {
+    statusText.textContent = "Online";
+    dot.classList.remove("off");
+  } else {
+    statusText.textContent = "Offline";
+    dot.classList.add("off");
+  }
 }
 window.addEventListener("online", updateStatus);
 window.addEventListener("offline", updateStatus);
 updateStatus();
 
-/* helpers */
+/* ===== IMAGE PROXY (hotlink/cors) ===== */
 function proxy(url) {
   if (!url) return null;
-  const clean = String(url).trim();
+  let clean = String(url).trim();
   if (!clean || clean === "null" || clean === "undefined") return null;
-  const noProto = clean.replace(/^https?:\/\//i, "");
-  return "https://wsrv.nl/?url=" + encodeURIComponent(noProto) + "&w=1600&fit=cover&output=webp";
+  clean = clean.replace(/^http:\/\//i, "https://");
+  if (clean.includes("wsrv.nl/?url=")) return clean;
+  return "https://wsrv.nl/?url=" + encodeURIComponent(clean) + "&w=1600&fit=cover&output=webp";
 }
-function setHeroImage(url){
-  const finalUrl = proxy(url) || FALLBACK_IMG;
-  imgEl.src = finalUrl;
-  imgEl.onerror = () => { if (imgEl.src !== FALLBACK_IMG) imgEl.src = FALLBACK_IMG; };
+
+/* ===== DOM ===== */
+const titleEl = document.getElementById("title");
+const sourceEl = document.getElementById("source");
+const imgEl = document.getElementById("image");
+const logoEl = document.getElementById("logo");
+const sourceIconWrap = document.getElementById("sourceIconWrap");
+const dateEl = document.getElementById("date");
+const scopeLabelEl = document.getElementById("scopeLabel");
+
+/* ===== HELPERS ===== */
+function fmtPublished(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return "";
+  const dd = String(d.getDate()).padStart(2, "0");
+  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const yyyy = d.getFullYear();
+  const hh = String(d.getHours()).padStart(2, "0");
+  const mi = String(d.getMinutes()).padStart(2, "0");
+  return `${dd}/${mm}/${yyyy} • ${hh}:${mi}`;
 }
+
 function faviconForLink(link){
   try{
     const domain = new URL(link).hostname.replace(/^www\./,"");
     return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
-  }catch{ return ""; }
+  }catch{
+    return "";
+  }
 }
-function fmtPublished(iso){
-  const d = new Date(iso);
-  if (isNaN(d.getTime())) return "";
-  return d.toLocaleString("pt-BR", { day:"2-digit", month:"2-digit", year:"numeric", hour:"2-digit", minute:"2-digit" }).replace(",", " •");
+
+function dateMs(v){
+  const d = new Date(v);
+  const t = d.getTime();
+  return Number.isNaN(t) ? 0 : t;
 }
-function dateMs(v){ const t = new Date(v).getTime(); return isNaN(t) ? 0 : t; }
+
 function dedupeByLink(list){
-  const s = new Set(); const out=[];
+  const seen = new Set();
+  const out = [];
   for (const it of list){
     const k = it.link || it.title;
-    if (!k || s.has(k)) continue;
-    s.add(k); out.push(it);
+    if (!k || seen.has(k)) continue;
+    seen.add(k);
+    out.push(it);
   }
   return out;
 }
 
+function setHeroImage(url) {
+  const finalUrl = proxy(url) || FALLBACK_IMG;
+  imgEl.src = finalUrl;
+  imgEl.onerror = () => {
+    if (imgEl.src !== FALLBACK_IMG) imgEl.src = FALLBACK_IMG;
+  };
+}
+
+/* ===== ROTATION: ordem diferente a cada atualização =====
+   - Seed por "janela": muda a cada UI_REFRESH_HOURS
+   - Persistência: salva offset no localStorage para não recomeçar igual
+*/
+function windowSeed(hours){
+  const now = Date.now();
+  const bucket = Math.floor(now / (hours * 60 * 60 * 1000));
+  return bucket >>> 0;
+}
+
+// PRNG simples (determinístico)
+function mulberry32(seed){
+  return function(){
+    let t = seed += 0x6D2B79F5;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  };
+}
+
+function shuffleDeterministic(arr, seed){
+  const a = arr.slice();
+  const rand = mulberry32(seed);
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+/* ===== FETCH ===== */
 async function fetchFromWorker(feed){
   const api =
     `${WORKER_URL}?feed=${encodeURIComponent(feed.url)}` +
-    `&ttlHours=${WORKER_TTL_HOURS}&safe=${SAFE_MODE}&limit=${ITEMS_PER_FEED}`;
+    `&ttlHours=${WORKER_TTL_HOURS}` +
+    `&safe=${SAFE_MODE}` +
+    `&limit=${ITEMS_PER_FEED}`;
+
   const res = await fetch(api, { cache: "no-store" });
   const data = await res.json();
-  if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  if (!data || data.ok !== true) throw new Error(`Resposta inválida do Worker`);
-  return (data.items||[]).map(it => ({
-    title: (it.title||"").trim(),
-    link: it.link||"",
-    pubDate: it.pubDate||"",
-    image: it.image||"",
+  if (!res.ok || !data || data.ok !== true) throw new Error("Worker inválido");
+  const items = Array.isArray(data.items) ? data.items : [];
+
+  return items.map(it => ({
+    title: (it.title || "").trim() || "Notícia",
+    link: it.link || "",
+    pubDate: it.pubDate || "",
+    image: it.image || "",
     sourceName: feed.name,
-    logo: faviconForLink(it.link||"")
+    logo: faviconForLink(it.link || "")
   }));
 }
 
@@ -248,66 +418,92 @@ let NEWS = [];
 let idx = 0;
 let rotateTimer = null;
 
-function render(){
+function renderCurrent(){
   if (!NEWS.length) return;
   const item = NEWS[idx % NEWS.length];
   idx++;
 
-  titleEl.textContent = item.title || "Notícia";
+  titleEl.textContent = item.title;
   sourceEl.textContent = item.sourceName || "Fonte";
 
-  if (item.logo){ logoEl.src = item.logo; logoEl.style.display = "block"; }
-  else { logoEl.style.display = "none"; }
+  // ícone circular (se não tiver, esconde)
+  if (item.logo){
+    logoEl.src = item.logo;
+    sourceIconWrap.style.display = "grid";
+  } else {
+    sourceIconWrap.style.display = "none";
+  }
 
   const pub = fmtPublished(item.pubDate);
-  if (pub){ dateEl.textContent = pub; dateEl.style.display = "flex"; }
-  else { dateEl.textContent = ""; dateEl.style.display = "none"; }
+  if (pub){
+    dateEl.textContent = pub;
+    dateEl.style.display = "inline-flex";
+  } else {
+    dateEl.textContent = "";
+    dateEl.style.display = "none";
+  }
 
   scopeLabelEl.textContent = "AGORA • BRASIL";
   setHeroImage(item.image);
 }
 
-async function loadNews(){
-  diagEl.textContent = "Carregando feeds…";
+function loadIndexFromStorage(total){
+  const key = "pv_news_offset";
+  const raw = Number(localStorage.getItem(key) || 0);
+  return (Number.isFinite(raw) ? raw : 0) % Math.max(1, total);
+}
+function saveIndexToStorage(next){
+  localStorage.setItem("pv_news_offset", String(next >>> 0));
+}
 
+async function loadNews(){
   if (!WORKER_URL || WORKER_URL.includes("COLE_AQUI")){
-    diagEl.textContent = "Falta configurar WORKER_URL (workers.dev).";
-    titleEl.textContent = "Configure o WORKER_URL";
+    titleEl.textContent = "Configure o WORKER_URL (workers.dev)";
     setHeroImage(null);
     return;
   }
 
   const results = await Promise.allSettled(FEEDS.map(fetchFromWorker));
   let all = [];
-  const errors = [];
 
   for (const r of results){
     if (r.status === "fulfilled") all = all.concat(r.value);
-    else errors.push(String(r.reason?.message || r.reason || "erro"));
   }
 
-  all = dedupeByLink(all).sort((a,b)=>dateMs(b.pubDate)-dateMs(a.pubDate)).slice(0, MAX_ITEMS);
+  all = dedupeByLink(all);
+  all.sort((a,b) => dateMs(b.pubDate) - dateMs(a.pubDate));
+  all = all.slice(0, MAX_ITEMS);
 
   if (!all.length){
-    diagEl.textContent = "Sem itens. Erros: " + (errors[0] || "desconhecido");
     titleEl.textContent = "Sem notícias no momento";
     sourceEl.textContent = "Fonte";
-    logoEl.style.display = "none";
+    sourceIconWrap.style.display = "none";
     dateEl.style.display = "none";
     setHeroImage(null);
     return;
   }
 
-  NEWS = all;
-  idx = 0;
+  // embaralha com seed por janela (muda a cada refresh)
+  const seed = windowSeed(UI_REFRESH_HOURS);
+  const shuffled = shuffleDeterministic(all, seed);
 
-  diagEl.textContent = `OK • ${NEWS.length} notícias • cache ${WORKER_TTL_HOURS}h`;
-  render();
+  // offset persistente para não recomeçar igual (mesmo seed)
+  const start = loadIndexFromStorage(shuffled.length);
+  NEWS = shuffled;
+  idx = start;
+
+  // renderiza agora e já salva o próximo offset
+  renderCurrent();
+  saveIndexToStorage(idx);
 
   if (rotateTimer) clearInterval(rotateTimer);
-  rotateTimer = setInterval(render, ROTATE_EVERY_MS);
+  rotateTimer = setInterval(() => {
+    renderCurrent();
+    saveIndexToStorage(idx);
+  }, ROTATE_EVERY_MS);
 }
 
+// carga inicial + refresh em horas
 loadNews();
 setInterval(loadNews, UI_REFRESH_HOURS * 60 * 60 * 1000);
 </script>
