@@ -8,25 +8,230 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800;900&display=swap" rel="stylesheet"/>
 
-<link rel="stylesheet" href="./css/pv-base.css">
-
 <style>
-  /* Ajustes do painel Notícias (só o conteúdo/hero) */
   :root{
-    /* se quiser igualar 100% o header aos outros: não mexa nisso */
-    --pvHeaderGrad: linear-gradient(180deg,#2f6f9d 0%,#184c75 55%,#0f3b5e 100%);
+    /* ===== PONTO VIEW THEME (igual padrão) ===== */
+    --header: linear-gradient(180deg,#2f6f9d 0%,#184c75 55%,#0f3b5e 100%);
+    --bg: radial-gradient(1200px 900px at 25% 10%, rgba(87,184,231,.22), rgba(10,46,62,0) 60%),
+          radial-gradient(900px 700px at 75% 80%, rgba(52,198,208,.14), rgba(6,18,24,0) 65%),
+          radial-gradient(1400px 1100px at 50% 55%, #0a2232 0%, #081423 62%, #040a0f 100%);
+    --card:#ffffff;
+    --line:#e6edf7;
+    --chip:#f3f7ff;
+    --muted:#6b7788;
+    --ink:#0e1b2a;
+
+    --radius:22px;
+    --shadow:0 18px 60px rgba(2,10,23,.18);
+
+    /* Safe padding padrão (igual painéis clima/ônibus) */
+    --safe: clamp(14px, 2.2vw, 32px);
+
+    /* Tipos responsivos */
+    --t-title: clamp(22px, 2.1vw, 34px);
+    --t-sub:   clamp(12px, 1.05vw, 16px);
+    --t-clock: clamp(42px, 4.2vw, 78px);
+
+    --t-headline: clamp(30px, 4.4vw, 70px);
+
+    /* footer meta */
+    --t-foot: clamp(11px, 0.95vw, 13px);
   }
 
-  .hero{
-    position:relative;
+  *{box-sizing:border-box}
+  html,body{height:100%}
+
+  body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    overflow:hidden;
+  }
+
+  /* ===== FULLSCREEN COM SAFE PADDING ===== */
+  .frame{
+    width:100vw;
+    height:100vh;
+    padding:var(--safe);
+    display:flex;
+  }
+
+  .panel{
     width:100%;
     height:100%;
+    background:var(--card);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    display:flex;
+    flex-direction:column;
+    animation:fade .6s ease forwards;
+    min-height:0;
+  }
+
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+
+  /* ===== HEADER ===== */
+  .header{
+    padding: clamp(14px, 1.4vw, 22px) clamp(16px, 1.8vw, 26px);
+    background:var(--header);
+    color:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    min-width:0;
+  }
+
+  .h-left{display:flex;gap:14px;align-items:center;min-width:0}
+  .iconBadge{
+    width:clamp(44px, 3.2vw, 62px);
+    height:clamp(44px, 3.2vw, 62px);
+    border-radius:16px;
+    display:grid;
+    place-items:center;
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.22);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+    flex:0 0 auto;
+  }
+  .iconBadge .material-icons-outlined{font-size:clamp(22px, 2vw, 30px); opacity:.95}
+
+  .titles{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .title{
+    font-size:var(--t-title);
+    font-weight:900;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .sub{
+    font-size:var(--t-sub);
+    font-weight:800;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    opacity:.92;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .h-right{
+    text-align:right;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    align-items:flex-end;
+    min-width:max-content;
+  }
+  .clock{
+    font-size:var(--t-clock);
+    font-weight:900;
+    line-height:1;
+    letter-spacing:.02em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ===== SUBBAR ===== */
+  .subbar{
+    background:var(--chip);
+    border-bottom:1px solid var(--line);
+    padding: 10px clamp(16px, 1.8vw, 26px);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    min-width:0;
+  }
+  .subbarLeft{
+    font-size:var(--t-sub);
+    font-weight:900;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#1c2c41;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .subbarRight{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:flex-end;
+    min-width:0;
+    white-space:nowrap;
+  }
+
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:rgba(255,255,255,.78);
+    border:1px solid rgba(15,23,42,.08);
+    color:#0f172a;
+    font-weight:900;
+    font-size:clamp(12px, 1.05vw, 16px);
+  }
+  .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:#22c55e;
+    box-shadow:0 0 0 0 rgba(34,197,94,.55);
+    animation:pulse 1.6s infinite;
+  }
+  .dot.off{background:#ef4444; animation:none; box-shadow:none;}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(34,197,94,.50)}
+    70%{box-shadow:0 0 0 10px rgba(34,197,94,0)}
+    100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
+  }
+
+  .metaSmall{
+    font-size:var(--t-sub);
+    font-weight:900;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#2b3b52;
+    opacity:.9;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:min(52vw, 700px);
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;
+    flex:1 1 auto;
     min-height:0;
     overflow:hidden;
+
+    /* ✅ fundo agradável mesmo sem imagem */
     background:
-      radial-gradient(1200px 800px at 40% 30%, rgba(17,24,39,.25), rgba(17,24,39,0) 60%),
-      linear-gradient(180deg, #0b1220 0%, #111827 100%);
+      radial-gradient(1200px 760px at 35% 25%, rgba(56,189,248,.18), rgba(0,0,0,0) 60%),
+      radial-gradient(900px 640px at 75% 80%, rgba(34,197,94,.10), rgba(0,0,0,0) 60%),
+      linear-gradient(180deg, #0b1220 0%, #0a1b2e 45%, #0b1020 100%);
   }
+
+  /* textura leve */
+  .hero::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    background:
+      radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.16) 0 50%, transparent 55%),
+      radial-gradient(2px 2px at 65% 20%, rgba(255,255,255,.12) 0 50%, transparent 55%),
+      radial-gradient(2px 2px at 80% 70%, rgba(255,255,255,.10) 0 50%, transparent 55%),
+      radial-gradient(2px 2px at 35% 75%, rgba(255,255,255,.10) 0 50%, transparent 55%);
+    opacity:.35;
+  }
+
   .hero img{
     position:absolute;
     inset:0;
@@ -35,128 +240,169 @@
     object-fit:cover;
     filter:saturate(1.02) contrast(1.03);
     transform:scale(1.01);
+    opacity:.78; /* ✅ evita “preto chapado” com overlay forte */
+    transition: opacity 220ms ease;
   }
+  .hero.noimg img{ opacity:0; } /* ✅ some com imagem quebrada */
+
+  /* ✅ overlay mais suave e elegante */
   .overlay{
     position:absolute;
     inset:0;
     background:
-      linear-gradient(180deg, rgba(0,0,0,.20) 0%, rgba(0,0,0,.70) 62%, rgba(0,0,0,.88) 100%),
-      radial-gradient(900px 520px at 30% 75%, rgba(0,0,0,.55), rgba(0,0,0,0) 65%);
+      linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,.55) 58%, rgba(0,0,0,.78) 100%),
+      radial-gradient(900px 520px at 30% 75%, rgba(0,0,0,.35), rgba(0,0,0,0) 65%);
   }
+
   .content{
     position:absolute;
-    inset:auto var(--pad) var(--pad);
-    bottom: var(--pad);
+    inset:auto clamp(16px, 1.8vw, 26px) clamp(16px, 1.8vw, 22px);
+    bottom: clamp(18px, 2.0vw, 26px);
     color:#fff;
     display:flex;
     flex-direction:column;
-    gap: 14px;
-    max-width: min(1200px, 92vw);
+    gap: 10px;
+    max-width: min(1280px, 92vw);
   }
+
   .headline{
-    font-size: clamp(30px, 4.4vw, 70px);
+    font-size:var(--t-headline);
     font-weight:900;
     line-height:1.05;
     letter-spacing:-.01em;
     text-shadow: 0 8px 24px rgba(0,0,0,.35);
   }
-  .metaRow{
+
+  /* ===== FOOTER ===== */
+  .footer{
+    flex:0 0 auto;
+    height: clamp(46px, 5.4vh, 72px);
     display:flex;
-    gap:10px;
-    flex-wrap:wrap;
     align-items:center;
+    justify-content:space-between; /* ✅ meta esquerda + logo direita */
+    padding: 10px clamp(16px, 1.8vw, 26px);
+    border-top:1px solid var(--line);
+    background: transparent;
+    gap: 14px;
+    min-width:0;
   }
-  .chip{
-    background:rgba(255,255,255,.92);
-    color:#0f172a;
-    padding:10px 12px;
+
+  .footerLeft{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    min-width:0;
+    overflow:hidden;
+  }
+
+  /* ✅ bolinha do badge com favicon dentro */
+  .siteBubble{
+    width:26px;
+    height:26px;
     border-radius:999px;
-    font-size: clamp(12px, 1.1vw, 16px);
-    font-weight:900;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    box-shadow: 0 10px 26px rgba(0,0,0,.15);
-  }
-  .sourceIcon{
-    width:26px;height:26px;border-radius:999px;
-    background:rgba(15,23,42,.10);
+    background: rgba(255,255,255,.90);
     border:1px solid rgba(15,23,42,.10);
-    display:grid; place-items:center;
+    display:grid;
+    place-items:center;
     overflow:hidden;
     flex:0 0 auto;
+    box-shadow: 0 8px 18px rgba(0,0,0,.06);
   }
-  .sourceIcon img{width:18px;height:18px;object-fit:contain;display:block}
+  .siteBubble img{
+    width:16px;height:16px;object-fit:contain;display:block;
+  }
+
+  .footMeta{
+    font-size:var(--t-foot);
+    font-weight:900;
+    letter-spacing:.10em;
+    text-transform:uppercase;
+    color:#31445f;
+    opacity:.92;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .footerRight{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    flex:0 0 auto;
+  }
+  .footerRight img{
+    height: clamp(16px, 2.4vh, 22px);
+    opacity:.80;
+    display:block;
+  }
+
+  /* ===== VERTICAL AJUSTES ===== */
+  @media (max-aspect-ratio: 10/16){
+    .content{max-width: 92vw;}
+    .headline{letter-spacing:-.02em;}
+  }
 </style>
 </head>
 
 <body>
-  <div class="pvPage">
-    <section class="pvShell">
+  <div class="frame">
+    <section class="panel">
 
       <!-- HEADER -->
-      <header class="pvHeader">
-        <div class="pvHeaderLeft">
-          <div class="pvIconBadge" aria-hidden="true">
+      <div class="header">
+        <div class="h-left">
+          <div class="iconBadge" aria-hidden="true">
             <span class="material-icons-outlined">newspaper</span>
           </div>
-          <div class="pvTitles">
-            <h1 class="pvTitle">NOTÍCIAS</h1>
-            <div class="pvSubtitle" id="subtitle">LOCAL • ES • BR</div>
+          <div class="titles">
+            <div class="title">NOTÍCIAS</div>
+            <div class="sub" id="subtitle">LOCAL • ES • BR</div>
           </div>
         </div>
-
-        <div class="pvHeaderRight">
-          <div class="pvClock" id="clock">--:--</div>
+        <div class="h-right">
+          <div class="clock" id="clock">--:--</div>
         </div>
-      </header>
+      </div>
 
       <!-- SUBBAR -->
-      <div class="pvSubbar">
-        <div class="pvSubLeft" id="subLeft">MANCHETE ATUAL</div>
-        <div class="pvSubRight">
-          <div class="pvSubLeft" style="font-size:var(--t-sub); font-weight:900; letter-spacing:.12em; opacity:.9;" id="scopeLabel">
-            AGORA • BRASIL
-          </div>
-          <div class="pvPill" id="pillOnline">
-            <span class="pvDot" id="dot"></span>
+      <div class="subbar">
+        <div class="subbarLeft" id="subLeft">MANCHETE ATUAL</div>
+
+        <div class="subbarRight">
+          <div class="metaSmall" id="scopeLabel">AGORA • BRASIL</div>
+
+          <div class="pill" id="pillOnline">
+            <span class="dot" id="dot"></span>
             <span id="statusText">Online</span>
           </div>
         </div>
       </div>
 
-      <!-- CONTENT -->
-      <main class="pvContent">
-        <section class="pvCard">
-          <div class="hero">
-            <img id="image" alt="Imagem da notícia" />
-            <div class="overlay"></div>
+      <!-- HERO -->
+      <div class="hero" id="hero">
+        <img id="image" alt="Imagem da notícia" />
+        <div class="overlay"></div>
 
-            <div class="content">
-              <div class="headline" id="title">Carregando…</div>
-
-              <div class="metaRow">
-                <div class="chip">
-                  <span class="sourceIcon" id="sourceIcon">
-                    <img id="favicon" alt="" />
-                  </span>
-                  <span id="source">Fonte</span>
-                </div>
-
-                <div class="chip" id="date"></div>
-              </div>
-            </div>
-          </div>
-        </section>
-      </main>
+        <div class="content">
+          <div class="headline" id="title">Carregando…</div>
+        </div>
+      </div>
 
       <!-- FOOTER -->
-      <footer class="pvFooter">
-        <div class="pvFooterLeft"></div>
-        <div class="pvFooterRight">
-          <img class="pvLogo" src="./assets/logo-pontoview.png" alt="PontoView"/>
+      <div class="footer">
+        <!-- ✅ Fonte + data discretos -->
+        <div class="footerLeft" aria-label="Fonte e data">
+          <span class="siteBubble" aria-hidden="true">
+            <img id="favicon" alt="" />
+          </span>
+          <div class="footMeta" id="footMeta">FONTE • — • —</div>
         </div>
-      </footer>
+
+        <!-- ✅ Logo à direita -->
+        <div class="footerRight">
+          <img src="./assets/logo-pontoview.png" alt="PontoView"/>
+        </div>
+      </div>
 
     </section>
   </div>
@@ -164,12 +410,14 @@
 <script>
 /* ========= CONFIG ========= */
 const WORKER_API = "https://pontoview-api.pedrhc258.workers.dev/api/news";
-const UI_ROTATE_MS = 15000;
-const UI_REFRESH_HOURS = 6;
+const UI_ROTATE_MS = 15000;     // troca manchete
+const UI_REFRESH_HOURS = 6;     // recarrega lista
 const LIMIT = 30;
 const SAFE = 1;
 
-const FALLBACK_IMG = "https://images.unsplash.com/photo-1504711432869-0df30a7e04ad?auto=format&fit=crop&w=1600&q=70";
+/* ✅ imagem padrão agradável (quando falhar) */
+const FALLBACK_IMG =
+  "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1600&q=70";
 
 /* ===== CLOCK ===== */
 const clock = document.getElementById("clock");
@@ -207,24 +455,33 @@ function fmtPublished(str){
   const mi = String(d.getMinutes()).padStart(2,"0");
   return `${dd}/${mm}/${yyyy} • ${hh}:${mi}`;
 }
+
 function extractSource(url=""){
   try{
     const host = new URL(url).hostname.replace("www.","");
     const base = host.split(".")[0] || "FONTE";
     return base.toUpperCase();
-  }catch{ return "FONTE"; }
+  }catch{
+    return "FONTE";
+  }
 }
+
 function faviconForLink(url=""){
   try{
     const u = new URL(url);
     return `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`;
-  }catch{ return ""; }
+  }catch{
+    return "";
+  }
 }
+
+/* wsrv.nl proxy (reduz hotlink/cors em algumas fontes) */
 function imgProxy(url){
   if(!url) return null;
   const clean = String(url).trim();
   if(!clean) return null;
   if(clean.includes("wsrv.nl/?url=")) return clean;
+
   const noProto = clean.replace(/^https?:\/\//i,"");
   return "https://wsrv.nl/?url=" + encodeURIComponent(noProto) + "&w=1600&fit=cover&output=webp";
 }
@@ -237,9 +494,12 @@ let rotateTimer = null;
 async function fetchFromWorker(){
   const seed = Date.now();
   const url = `${WORKER_API}?ttlHours=${UI_REFRESH_HOURS}&limit=${LIMIT}&safe=${SAFE}&seed=${seed}`;
+
   const res = await fetch(url, { cache:"no-store" });
   const data = await res.json();
+
   if(!res.ok || !data || data.ok !== true) throw new Error("Worker inválido");
+
   const items = Array.isArray(data.items) ? data.items : [];
   return items.map(it => ({
     title: (it.title || "").trim() || "Notícia",
@@ -252,42 +512,65 @@ async function fetchFromWorker(){
 }
 
 function setHeroImage(url){
+  const hero = document.getElementById("hero");
   const imgEl = document.getElementById("image");
-  const finalUrl = imgProxy(url) || FALLBACK_IMG;
-  imgEl.src = finalUrl;
 
+  const finalUrl = imgProxy(url) || FALLBACK_IMG;
+
+  // tenta carregar primeiro (pré-load)
   const pre = new Image();
-  pre.onerror = ()=>{ if(imgEl.src !== FALLBACK_IMG) imgEl.src = FALLBACK_IMG; };
+  pre.onload = ()=>{
+    hero.classList.remove("noimg");
+    imgEl.src = finalUrl;
+  };
+  pre.onerror = ()=>{
+    // ✅ se falhar, mantém fundo degradê + coloca fallback
+    hero.classList.remove("noimg");
+    imgEl.src = FALLBACK_IMG;
+  };
   pre.src = finalUrl;
 }
+
 document.getElementById("image").addEventListener("error", ()=>{
+  const hero = document.getElementById("hero");
   const imgEl = document.getElementById("image");
-  if(imgEl.src !== FALLBACK_IMG) imgEl.src = FALLBACK_IMG;
+
+  // ✅ se o fallback também falhar, some com a imagem (fica só o degradê bonito)
+  if (imgEl.src && imgEl.src.includes("unsplash.com")){
+    hero.classList.add("noimg");
+  } else {
+    imgEl.src = FALLBACK_IMG;
+  }
 });
+
+function renderFooterMeta(item){
+  const fav = document.getElementById("favicon");
+  const meta = document.getElementById("footMeta");
+
+  const src = (item.sourceName || "FONTE").toUpperCase();
+  const pub = fmtPublished(item.pubDate) || "—";
+
+  // favicon dentro da bolinha
+  if (item.favicon){
+    fav.src = item.favicon;
+    fav.style.display = "block";
+  } else {
+    fav.style.display = "none";
+  }
+
+  meta.textContent = `${src} • ${pub}`;
+}
 
 function renderCurrent(){
   if(!NEWS.length) return;
+
   const item = NEWS[idx % NEWS.length];
   idx++;
 
   document.getElementById("title").textContent = item.title || "Notícia";
-  document.getElementById("source").textContent = item.sourceName || "FONTE";
-
-  const fav = document.getElementById("favicon");
-  const iconWrap = document.getElementById("sourceIcon");
-  if(item.favicon){
-    fav.src = item.favicon;
-    iconWrap.style.display = "grid";
-  } else {
-    iconWrap.style.display = "none";
-  }
-
-  const pub = fmtPublished(item.pubDate);
-  const dateEl = document.getElementById("date");
-  dateEl.textContent = pub || "";
-  dateEl.style.display = pub ? "flex" : "none";
-
   document.getElementById("scopeLabel").textContent = "AGORA • BRASIL";
+
+  renderFooterMeta(item);
   setHeroImage(item.image);
 }
 
@@ -295,6 +578,7 @@ async function refreshAll(){
   try{
     NEWS = await fetchFromWorker();
     if(!NEWS.length) throw new Error("Sem itens");
+
     idx = Math.floor(Math.random() * NEWS.length);
 
     renderCurrent();
@@ -303,15 +587,22 @@ async function refreshAll(){
     rotateTimer = setInterval(renderCurrent, UI_ROTATE_MS);
   }catch(e){
     document.getElementById("title").textContent = "Sem notícias no momento";
-    document.getElementById("source").textContent = "PontoView";
-    document.getElementById("date").style.display = "none";
     document.getElementById("scopeLabel").textContent = "AGORA • BRASIL";
+
+    // footer neutro
+    document.getElementById("favicon").style.display = "none";
+    document.getElementById("footMeta").textContent = "PONTOVIEW • —";
+
+    // visual agradável
     setHeroImage(FALLBACK_IMG);
     console.error(e);
   }
 }
 
+// primeira carga
 refreshAll();
+
+// recarrega lista a cada X horas
 setInterval(refreshAll, UI_REFRESH_HOURS * 60 * 60 * 1000);
 </script>
 </body>
