@@ -265,7 +265,10 @@ body{
 
 <script>
 /* ===== CONFIG ===== */
-const WORKER_URL = "https://pontoview-api.pedrhc258.workers.dev/"; // mantenha seu link real
+const WORKER_URL = "https://pontoview-api.pedrhc258.workers.dev/api/news";
+const url = `${WORKER_URL}?ttlHours=6&safe=1&limit=30&seed=${Date.now()}`;
+const data = await fetch(url).then(r=>r.json());
+
 
 const FEEDS = [
   { name: "Agência Brasil", url: "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml" },
