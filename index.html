@@ -3,299 +3,394 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Notícias • Vyre</title>
+<title>PontoView • Notícias</title>
 
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800;900&display=swap" rel="stylesheet"/>
 
 <style>
-:root{
-  --header: linear-gradient(180deg,#2f6f9d 0%,#184c75 55%,#0f3b5e 100%);
-  --bg: radial-gradient(1200px 900px at 25% 10%, rgba(87,184,231,.22), rgba(10,46,62,0) 60%),
-        radial-gradient(900px 700px at 75% 80%, rgba(52,198,208,.14), rgba(6,18,24,0) 65%),
-        radial-gradient(1400px 1100px at 50% 55%, #0a2232 0%, #081423 62%, #040a0f 100%);
-  --chipText:#0f172a;
-  --chipBg: rgba(255,255,255,.90);
-  --ink:#0b1220;
+  :root{
+    /* ===== PONTO VIEW THEME (igual padrão) ===== */
+    --header: linear-gradient(180deg,#2f6f9d 0%,#184c75 55%,#0f3b5e 100%);
+    --bg: radial-gradient(1200px 900px at 25% 10%, rgba(87,184,231,.22), rgba(10,46,62,0) 60%),
+          radial-gradient(900px 700px at 75% 80%, rgba(52,198,208,.14), rgba(6,18,24,0) 65%),
+          radial-gradient(1400px 1100px at 50% 55%, #0a2232 0%, #081423 62%, #040a0f 100%);
+    --card:#ffffff;
+    --line:#e6edf7;
+    --chip:#f3f7ff;
+    --muted:#6b7788;
+    --ink:#0e1b2a;
 
-  /* fundo do hero quando não há imagem / está carregando */
-  --heroFallback:
-    radial-gradient(900px 600px at 20% 15%, rgba(87,184,231,.20), rgba(0,0,0,0) 60%),
-    radial-gradient(800px 500px at 80% 85%, rgba(52,198,208,.16), rgba(0,0,0,0) 65%),
-    linear-gradient(180deg, #0b1f2d 0%, #07111a 70%, #04070b 100%);
-}
+    --radius:22px;
+    --shadow:0 18px 60px rgba(2,10,23,.18);
 
-*{box-sizing:border-box}
-html,body{
-  height:100%;
-  margin:0;
-  overflow:hidden; /* remove "barra" ao F11 (evita scroll/overflow) */
-}
-body{
-  font-family:Inter,system-ui;
-  background:var(--bg);
-  display:grid;
-  place-items:center;
-  padding:clamp(10px, 1.6vw, 20px);
-}
+    /* Safe padding padrão (igual painéis clima/ônibus) */
+    --safe: clamp(14px, 2.2vw, 32px);
 
-/* ===== PANEL ===== */
-.panel{
-  width:min(1500px, 96vw);
-  height:calc(100vh - (clamp(10px, 1.6vw, 20px) * 2));
-  background:#fff;
-  border-radius:18px;
-  overflow:hidden;
-  box-shadow:0 18px 60px rgba(2,10,23,.18);
-  display:flex;
-  flex-direction:column;
-}
+    /* Tipos responsivos */
+    --t-title: clamp(22px, 2.1vw, 34px);
+    --t-sub:   clamp(12px, 1.05vw, 16px);
+    --t-clock: clamp(42px, 4.2vw, 78px);
 
-/* ===== HEADER ===== */
-.header{
-  padding:clamp(12px, 1.2vw, 14px) clamp(14px, 1.8vw, 22px);
-  background:var(--header);
-  color:#fff;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-}
-.h-left{display:flex;gap:14px;align-items:center}
-.iconBadge{
-  width:44px;height:44px;border-radius:14px;
-  display:grid;place-items:center;
-  background:rgba(255,255,255,.1);
-}
-.title{
-  font-size:clamp(22px, 2.0vw, 28px);
-  font-weight:900;
-  letter-spacing:.06em;
-}
-.sub{
-  font-size:clamp(10px, .9vw, 12px);
-  font-weight:800;
-  letter-spacing:.14em;
-  opacity:.9;
-}
-.h-right{text-align:right}
-.clock{
-  font-size:clamp(42px, 4.2vw, 52px);
-  font-weight:900;
-  line-height:1;
-}
+    --t-headline: clamp(30px, 4.4vw, 70px);
+    --t-chip: clamp(12px, 1.1vw, 16px);
+  }
 
-/* ===== SUBSTRIP ===== */
-.substrip{
-  background:#f3f7ff;
-  padding:10px clamp(14px, 1.8vw, 22px);
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.14em;
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  gap:12px;
-}
-.substrip span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+  *{box-sizing:border-box}
+  html,body{height:100%}
 
-/* badge Online/Offline */
-.status{
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-  padding:6px 12px;
-  border-radius:999px;
-  background:rgba(15,23,42,.06);
-  color:var(--ink);
-  font-size:12px;
-  font-weight:900;
-  letter-spacing:.02em;
-}
-.dot{
-  width:10px;height:10px;border-radius:50%;
-  background:#22c55e;
-  animation:pulse 1.5s infinite;
-}
-.off{background:#ef4444}
-@keyframes pulse{
-  0%{box-shadow:0 0 0 0 rgba(34,197,94,.45)}
-  70%{box-shadow:0 0 0 10px rgba(34,197,94,0)}
-}
+  body{
+    margin:0;
+    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+    background:var(--bg);
+    color:var(--ink);
+    overflow:hidden;
+  }
 
-/* ===== HERO ===== */
-.hero{
-  position:relative;
-  flex:1;
-  overflow:hidden;
-  background:var(--heroFallback); /* fallback contrastante */
-}
+  /* ===== FULLSCREEN COM SAFE PADDING ===== */
+  .frame{
+    width:100vw;
+    height:100vh;
+    padding:var(--safe);
+    display:flex;
+  }
 
-/* imagem sempre absoluta, não "empurra" layout */
-.hero img{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-}
+  .panel{
+    width:100%;
+    height:100%;
+    background:var(--card);
+    border-radius:var(--radius);
+    overflow:hidden;
+    box-shadow:var(--shadow);
+    display:flex;
+    flex-direction:column;
+    animation:fade .6s ease forwards;
+  }
 
-/* overlay: garante contraste MESMO sem imagem */
-.overlay{
-  position:absolute;
-  inset:0;
-  background:
-    linear-gradient(180deg, rgba(0,0,0,.15) 0%, rgba(0,0,0,.35) 35%, rgba(0,0,0,.82) 100%);
-}
+  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
 
-.content{
-  position:absolute;
-  bottom:clamp(14px, 1.8vw, 22px);
-  left:clamp(14px, 1.8vw, 22px);
-  right:clamp(14px, 1.8vw, 22px);
-  color:#fff;
-}
+  /* ===== HEADER ===== */
+  .header{
+    padding: clamp(14px, 1.4vw, 22px) clamp(16px, 1.8vw, 26px);
+    background:var(--header);
+    color:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:16px;
+    border-bottom:1px solid rgba(255,255,255,.12);
+    min-width:0;
+  }
 
-.headline{
-  font-size:clamp(30px, 4.1vw, 56px);
-  font-weight:900;
-  line-height:1.08;
-  max-width: 1400px;
-  text-wrap:balance;
-  text-shadow:0 10px 28px rgba(0,0,0,.35);
-}
+  .h-left{display:flex;gap:14px;align-items:center;min-width:0}
+  .iconBadge{
+    width:clamp(44px, 3.2vw, 62px);
+    height:clamp(44px, 3.2vw, 62px);
+    border-radius:16px;
+    display:grid;
+    place-items:center;
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.22);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
+    flex:0 0 auto;
+  }
+  .iconBadge .material-icons-outlined{font-size:clamp(22px, 2vw, 30px); opacity:.95}
 
-/* ===== META BADGES ===== */
-.meta{
-  margin-top:clamp(10px, 1.2vw, 14px);
-  display:flex;
-  gap:10px;
-  flex-wrap:wrap;
-  align-items:center;
-}
-.chip{
-  background:var(--chipBg);
-  color:var(--chipText);
-  padding:8px 12px;
-  border-radius:999px;
-  font-size:12px;
-  font-weight:900;
-  display:inline-flex;
-  align-items:center;
-  gap:10px;
-}
+  .titles{display:flex;flex-direction:column;gap:6px;min-width:0}
+  .title{
+    font-size:var(--t-title);
+    font-weight:900;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .sub{
+    font-size:var(--t-sub);
+    font-weight:800;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    opacity:.92;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
 
-/* Ícone circular da fonte usando background-image (não vaza pra manchete) */
-.sourceIcon{
-  width:26px;height:26px;border-radius:999px;
-  background:rgba(15,23,42,.10);
-  display:inline-block;
-  background-size:18px 18px;
-  background-repeat:no-repeat;
-  background-position:center;
-  flex:0 0 26px;
-}
+  .h-right{
+    text-align:right;
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    align-items:flex-end;
+    min-width:max-content;
+  }
+  .clock{
+    font-size:var(--t-clock);
+    font-weight:900;
+    line-height:1;
+    letter-spacing:.02em;
+  }
 
-/* ===== FOOTER ===== */
-.footer{
-  padding:10px clamp(14px, 1.8vw, 22px);
-  display:flex;
-  justify-content:flex-end;
-}
-.footer img{height:22px;opacity:.75}
+  /* ===== SUBBAR ===== */
+  .subbar{
+    background:var(--chip);
+    border-bottom:1px solid var(--line);
+    padding: 10px clamp(16px, 1.8vw, 26px);
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    min-width:0;
+  }
+  .subbarLeft{
+    font-size:var(--t-sub);
+    font-weight:900;
+    letter-spacing:.14em;
+    text-transform:uppercase;
+    color:#1c2c41;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+  .subbarRight{
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:flex-end;
+    min-width:0;
+    white-space:nowrap;
+  }
 
-/* ===== RESPONSIVO ===== */
-@media (max-aspect-ratio: 4/5){
-  .panel{width:min(980px,96vw)}
-  .header{align-items:flex-start}
-  .substrip{flex-wrap:wrap}
-}
+  .pill{
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    padding:8px 12px;
+    border-radius:999px;
+    background:rgba(255,255,255,.78);
+    border:1px solid rgba(15,23,42,.08);
+    color:#0f172a;
+    font-weight:900;
+    font-size:var(--t-chip);
+  }
+  .dot{
+    width:10px;height:10px;border-radius:50%;
+    background:#22c55e;
+    box-shadow:0 0 0 0 rgba(34,197,94,.55);
+    animation:pulse 1.6s infinite;
+  }
+  .dot.off{background:#ef4444; animation:none; box-shadow:none;}
+  @keyframes pulse{
+    0%{box-shadow:0 0 0 0 rgba(34,197,94,.50)}
+    70%{box-shadow:0 0 0 10px rgba(34,197,94,0)}
+    100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
+  }
+
+  .metaSmall{
+    font-size:var(--t-sub);
+    font-weight:900;
+    letter-spacing:.12em;
+    text-transform:uppercase;
+    color:#2b3b52;
+    opacity:.9;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width:min(52vw, 700px);
+  }
+
+  /* ===== HERO ===== */
+  .hero{
+    position:relative;
+    flex:1 1 auto;
+    min-height:0;
+    overflow:hidden;
+    background:
+      radial-gradient(1200px 800px at 40% 30%, rgba(17,24,39,.25), rgba(17,24,39,0) 60%),
+      linear-gradient(180deg, #0b1220 0%, #111827 100%);
+  }
+
+  .hero img{
+    position:absolute;
+    inset:0;
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    filter:saturate(1.02) contrast(1.03);
+    transform:scale(1.01);
+  }
+
+  /* overlay forte p/ contraste mesmo sem imagem */
+  .overlay{
+    position:absolute;
+    inset:0;
+    background:
+      linear-gradient(180deg, rgba(0,0,0,.20) 0%, rgba(0,0,0,.70) 62%, rgba(0,0,0,.88) 100%),
+      radial-gradient(900px 520px at 30% 75%, rgba(0,0,0,.55), rgba(0,0,0,0) 65%);
+  }
+
+  .content{
+    position:absolute;
+    inset:auto clamp(16px, 1.8vw, 26px) clamp(16px, 1.8vw, 22px);
+    bottom: clamp(16px, 1.8vw, 22px);
+    color:#fff;
+    display:flex;
+    flex-direction:column;
+    gap: 14px;
+    max-width: min(1200px, 92vw);
+  }
+
+  .headline{
+    font-size:var(--t-headline);
+    font-weight:900;
+    line-height:1.05;
+    letter-spacing:-.01em;
+    text-shadow: 0 8px 24px rgba(0,0,0,.35);
+  }
+
+  .metaRow{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+
+  .chip{
+    background:rgba(255,255,255,.92);
+    color:#0f172a;
+    padding:10px 12px;
+    border-radius:999px;
+    font-size:var(--t-chip);
+    font-weight:900;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    box-shadow: 0 10px 26px rgba(0,0,0,.15);
+  }
+
+  .sourceIcon{
+    width:26px;height:26px;border-radius:999px;
+    background:rgba(15,23,42,.10);
+    border:1px solid rgba(15,23,42,.10);
+    display:grid; place-items:center;
+    overflow:hidden;
+    flex:0 0 auto;
+  }
+  .sourceIcon img{width:18px;height:18px;object-fit:contain;display:block}
+
+  .dateChip{opacity:.98}
+
+  /* ===== FOOTER ===== */
+  .footer{
+    flex:0 0 auto;
+    height: clamp(46px, 5.4vh, 72px);
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    padding: 10px clamp(16px, 1.8vw, 26px);
+    border-top:1px solid var(--line);
+    background: transparent;
+  }
+  .footer img{
+    height: clamp(16px, 2.4vh, 22px);
+    opacity:.80;
+    display:block;
+  }
+
+  /* ===== VERTICAL AJUSTES (sem quebrar) ===== */
+  @media (max-aspect-ratio: 10/16){
+    .content{max-width: 92vw;}
+    .headline{letter-spacing:-.02em;}
+  }
 </style>
 </head>
 
 <body>
-<section class="panel">
-
-  <div class="header">
-    <div class="h-left">
-      <div class="iconBadge"><span class="material-icons-outlined">newspaper</span></div>
-      <div>
-        <div class="title">NOTÍCIAS</div>
-        <div class="sub">LOCAL • ES • BR</div>
-      </div>
-    </div>
-    <div class="h-right">
-      <div class="clock" id="clock">--:--</div>
-    </div>
-  </div>
-
-  <div class="substrip">
-    <span>MANCHETE ATUAL</span>
-    <span id="scopeLabel">AGORA • BRASIL</span>
-
-    <span class="status">
-      <span class="dot" id="dot"></span>
-      <span id="statusText">Online</span>
-    </span>
-  </div>
-
-  <div class="hero">
-    <img id="image" alt="" />
-    <div class="overlay"></div>
-
-    <div class="content">
-      <div class="headline" id="title">Carregando…</div>
-
-      <div class="meta">
-        <div class="chip">
-          <span class="sourceIcon" id="sourceIcon"></span>
-          <span id="source">Fonte</span>
+  <div class="frame">
+    <section class="panel">
+      <!-- HEADER -->
+      <div class="header">
+        <div class="h-left">
+          <div class="iconBadge" aria-hidden="true">
+            <span class="material-icons-outlined">newspaper</span>
+          </div>
+          <div class="titles">
+            <div class="title">NOTÍCIAS</div>
+            <div class="sub" id="subtitle">LOCAL • ES • BR</div>
+          </div>
         </div>
-
-        <div class="chip" id="date"></div>
+        <div class="h-right">
+          <div class="clock" id="clock">--:--</div>
+        </div>
       </div>
-    </div>
-  </div>
 
-  <div class="footer">
-    <img src="./assets/logo-pontoview.png" alt="PontoView" onerror="this.style.display='none'"/>
-  </div>
+      <!-- SUBBAR -->
+      <div class="subbar">
+        <div class="subbarLeft" id="subLeft">MANCHETE ATUAL</div>
 
-</section>
+        <div class="subbarRight">
+          <div class="metaSmall" id="scopeLabel">AGORA • BRASIL</div>
+
+          <div class="pill" id="pillOnline">
+            <span class="dot" id="dot"></span>
+            <span id="statusText">Online</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- HERO -->
+      <div class="hero">
+        <img id="image" alt="Imagem da notícia" />
+        <div class="overlay"></div>
+
+        <div class="content">
+          <div class="headline" id="title">Carregando…</div>
+
+          <div class="metaRow">
+            <div class="chip">
+              <span class="sourceIcon" id="sourceIcon">
+                <img id="favicon" alt="" />
+              </span>
+              <span id="source">Fonte</span>
+            </div>
+
+            <div class="chip dateChip" id="date"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- FOOTER -->
+      <div class="footer">
+        <img src="./assets/logo-pontoview.png" alt="PontoView"/>
+      </div>
+    </section>
+  </div>
 
 <script>
-/* ===== CONFIG ===== */
-const WORKER_URL = "https://pontoview-api.pedrhc258.workers.dev/api/news";
-const url = `${WORKER_URL}?ttlHours=6&safe=1&limit=30&seed=${Date.now()}`;
-const data = await fetch(url).then(r=>r.json());
+/* ========= CONFIG ========= */
+const WORKER_API = "https://pontoview-api.pedrhc258.workers.dev/api/news";
+const UI_ROTATE_MS = 15000;     // troca manchete
+const UI_REFRESH_HOURS = 6;     // recarrega lista (usa seed p/ variar ordem)
+const LIMIT = 30;
+const SAFE = 1;
 
-
-const FEEDS = [
-  { name: "Agência Brasil", url: "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml" },
-  { name: "Brasil de Fato", url: "https://www.brasildefato.com.br/feed/" }
-];
-
-const SAFE_MODE = 1;
-const WORKER_TTL_HOURS = 6;
-const UI_REFRESH_HOURS = 6;
-const ITEMS_PER_FEED = 18;
-const ROTATE_EVERY_MS = 15000;
-const MAX_ITEMS = 40;
-
-const FALLBACK_IMG =
-  "https://images.unsplash.com/photo-1504711432869-0df30a7e04ad?auto=format&fit=crop&w=1600&q=70";
+/* fallback visual (quando imagem falhar ou vier vazia) */
+const FALLBACK_IMG = "https://images.unsplash.com/photo-1504711432869-0df30a7e04ad?auto=format&fit=crop&w=1600&q=70";
 
 /* ===== CLOCK ===== */
 const clock = document.getElementById("clock");
-setInterval(() => {
-  clock.textContent = new Date().toLocaleTimeString("pt-BR", { hour: "2-digit", minute: "2-digit" });
-}, 1000);
+function tickClock(){
+  clock.textContent = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+}
+tickClock();
+setInterval(tickClock, 1000);
 
-/* ===== ONLINE/OFFLINE ===== */
+/* ===== ONLINE / OFFLINE ===== */
 const statusText = document.getElementById("statusText");
 const dot = document.getElementById("dot");
-function updateStatus() {
-  if (navigator.onLine) {
+function updateStatus(){
+  if (navigator.onLine){
     statusText.textContent = "Online";
     dot.classList.remove("off");
   } else {
@@ -307,206 +402,158 @@ window.addEventListener("online", updateStatus);
 window.addEventListener("offline", updateStatus);
 updateStatus();
 
-/* ===== IMAGE PROXY ===== */
-function proxy(url) {
-  if (!url) return null;
-  let clean = String(url).trim();
-  if (!clean || clean === "null" || clean === "undefined") return null;
-  clean = clean.replace(/^http:\/\//i, "https://");
-  if (clean.includes("wsrv.nl/?url=")) return clean;
-  return "https://wsrv.nl/?url=" + encodeURIComponent(clean) + "&w=1600&fit=cover&output=webp";
-}
-
 /* ===== HELPERS ===== */
-function fmtPublished(iso) {
-  if (!iso) return "";
-  const d = new Date(iso);
+function fmtPublished(str){
+  if (!str) return "";
+  const d = new Date(str);
   if (Number.isNaN(d.getTime())) return "";
-  const dd = String(d.getDate()).padStart(2, "0");
-  const mm = String(d.getMonth() + 1).padStart(2, "0");
+  const dd = String(d.getDate()).padStart(2,"0");
+  const mm = String(d.getMonth()+1).padStart(2,"0");
   const yyyy = d.getFullYear();
-  const hh = String(d.getHours()).padStart(2, "0");
-  const mi = String(d.getMinutes()).padStart(2, "0");
+  const hh = String(d.getHours()).padStart(2,"0");
+  const mi = String(d.getMinutes()).padStart(2,"0");
   return `${dd}/${mm}/${yyyy} • ${hh}:${mi}`;
 }
 
-function faviconForLink(link){
+function extractSource(url=""){
   try{
-    const domain = new URL(link).hostname.replace(/^www\./,"");
-    return `https://www.google.com/s2/favicons?domain=${encodeURIComponent(domain)}&sz=64`;
+    const host = new URL(url).hostname.replace("www.","");
+    const base = host.split(".")[0] || "FONTE";
+    return base.toUpperCase();
+  }catch{
+    return "FONTE";
+  }
+}
+
+function faviconForLink(url=""){
+  try{
+    const u = new URL(url);
+    return `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`;
   }catch{
     return "";
   }
 }
 
-function dateMs(v){
-  const t = new Date(v).getTime();
-  return Number.isNaN(t) ? 0 : t;
+/* wsrv.nl proxy (reduz hotlink/cors em algumas fontes) */
+function imgProxy(url){
+  if(!url) return null;
+  const clean = String(url).trim();
+  if(!clean) return null;
+  if(clean.includes("wsrv.nl/?url=")) return clean;
+
+  // wsrv prefere sem protocolo
+  const noProto = clean.replace(/^https?:\/\//i,"");
+  return "https://wsrv.nl/?url=" + encodeURIComponent(noProto) + "&w=1600&fit=cover&output=webp";
 }
 
-function dedupeByLink(list){
-  const seen = new Set();
-  const out = [];
-  for (const it of list){
-    const k = it.link || it.title;
-    if (!k || seen.has(k)) continue;
-    seen.add(k);
-    out.push(it);
-  }
-  return out;
-}
+/* ===== DATA FLOW ===== */
+let NEWS = [];
+let idx = 0;
+let rotateTimer = null;
 
-function windowSeed(hours){
-  const now = Date.now();
-  const bucket = Math.floor(now / (hours * 60 * 60 * 1000));
-  return bucket >>> 0;
-}
-function mulberry32(seed){
-  return function(){
-    let t = seed += 0x6D2B79F5;
-    t = Math.imul(t ^ (t >>> 15), t | 1);
-    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
-    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
-  };
-}
-function shuffleDeterministic(arr, seed){
-  const a = arr.slice();
-  const rand = mulberry32(seed);
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(rand() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
-}
-function loadIndexFromStorage(total){
-  const key = "pv_news_offset";
-  const raw = Number(localStorage.getItem(key) || 0);
-  return (Number.isFinite(raw) ? raw : 0) % Math.max(1, total);
-}
-function saveIndexToStorage(next){
-  localStorage.setItem("pv_news_offset", String(next >>> 0));
-}
+async function fetchFromWorker(){
+  const seed = Date.now();
+  const url = `${WORKER_API}?ttlHours=${UI_REFRESH_HOURS}&limit=${LIMIT}&safe=${SAFE}&seed=${seed}`;
 
-/* ===== DOM ===== */
-const titleEl = document.getElementById("title");
-const sourceEl = document.getElementById("source");
-const dateEl = document.getElementById("date");
-const scopeLabelEl = document.getElementById("scopeLabel");
-const imgEl = document.getElementById("image");
-const sourceIcon = document.getElementById("sourceIcon");
-
-/* ===== render ===== */
-function setHeroImage(url) {
-  const finalUrl = proxy(url) || FALLBACK_IMG;
-
-  // coloca logo de cara (sem flicker)
-  imgEl.src = finalUrl;
-
-  // se falhar, fallback; o fundo do hero (CSS) garante contraste
-  imgEl.onerror = () => {
-    if (imgEl.src !== FALLBACK_IMG) imgEl.src = FALLBACK_IMG;
-  };
-}
-
-async function fetchFromWorker(feed){
-  const api =
-    `${WORKER_URL}?feed=${encodeURIComponent(feed.url)}` +
-    `&ttlHours=${WORKER_TTL_HOURS}&safe=${SAFE_MODE}&limit=${ITEMS_PER_FEED}`;
-
-  const res = await fetch(api, { cache: "no-store" });
+  const res = await fetch(url, { cache:"no-store" });
   const data = await res.json();
-  if (!res.ok || !data || data.ok !== true) throw new Error("Worker inválido");
+
+  if(!res.ok || !data || data.ok !== true) throw new Error("Worker inválido");
 
   const items = Array.isArray(data.items) ? data.items : [];
+  // normaliza para o render
   return items.map(it => ({
     title: (it.title || "").trim() || "Notícia",
     link: it.link || "",
     pubDate: it.pubDate || "",
     image: it.image || "",
-    sourceName: feed.name,
+    sourceName: extractSource(it.link || ""),
     favicon: faviconForLink(it.link || "")
   }));
 }
 
-let NEWS = [];
-let idx = 0;
-let rotateTimer = null;
+function setHeroImage(url){
+  const imgEl = document.getElementById("image");
+  const finalUrl = imgProxy(url) || FALLBACK_IMG;
+
+  imgEl.src = finalUrl;
+
+  // preload + fallback
+  const pre = new Image();
+  pre.onload = ()=>{};
+  pre.onerror = ()=>{
+    if(imgEl.src !== FALLBACK_IMG) imgEl.src = FALLBACK_IMG;
+  };
+  pre.src = finalUrl;
+}
+
+document.getElementById("image").addEventListener("error", ()=>{
+  const imgEl = document.getElementById("image");
+  if(imgEl.src !== FALLBACK_IMG) imgEl.src = FALLBACK_IMG;
+});
 
 function renderCurrent(){
-  if (!NEWS.length) return;
+  if(!NEWS.length) return;
 
   const item = NEWS[idx % NEWS.length];
   idx++;
 
-  titleEl.textContent = item.title;
-  sourceEl.textContent = item.sourceName || "Fonte";
+  document.getElementById("title").textContent = item.title || "Notícia";
+  document.getElementById("source").textContent = item.sourceName || "FONTE";
+
+  const fav = document.getElementById("favicon");
+  const iconWrap = document.getElementById("sourceIcon");
+  if(item.favicon){
+    fav.src = item.favicon;
+    iconWrap.style.display = "grid";
+  } else {
+    iconWrap.style.display = "none";
+  }
 
   const pub = fmtPublished(item.pubDate);
-  if (pub){
+  const dateEl = document.getElementById("date");
+  if(pub){
     dateEl.textContent = pub;
-    dateEl.style.display = "inline-flex";
+    dateEl.style.display = "flex";
   } else {
     dateEl.textContent = "";
     dateEl.style.display = "none";
   }
 
-  // ícone circular como background (não tem como "vazar")
-  if (item.favicon){
-    sourceIcon.style.display = "inline-block";
-    sourceIcon.style.backgroundImage = `url("${item.favicon}")`;
-  } else {
-    sourceIcon.style.display = "none";
-    sourceIcon.style.backgroundImage = "none";
-  }
-
-  scopeLabelEl.textContent = "AGORA • BRASIL";
+  // scope label simples (pode evoluir no Worker)
+  document.getElementById("scopeLabel").textContent = "AGORA • BRASIL";
 
   setHeroImage(item.image);
-  saveIndexToStorage(idx);
 }
 
-async function loadNews(){
-  if (!WORKER_URL || WORKER_URL.includes("COLE_AQUI")){
-    titleEl.textContent = "Configure o WORKER_URL (workers.dev)";
-    setHeroImage(null);
-    return;
+async function refreshAll(){
+  try{
+    NEWS = await fetchFromWorker();
+    if(!NEWS.length){
+      throw new Error("Sem itens");
+    }
+    // começa em um ponto diferente a cada refresh
+    idx = Math.floor(Math.random() * NEWS.length);
+
+    renderCurrent();
+
+    if(rotateTimer) clearInterval(rotateTimer);
+    rotateTimer = setInterval(renderCurrent, UI_ROTATE_MS);
+  }catch(e){
+    document.getElementById("title").textContent = "Sem notícias no momento";
+    document.getElementById("source").textContent = "PontoView";
+    document.getElementById("date").style.display = "none";
+    document.getElementById("scopeLabel").textContent = "AGORA • BRASIL";
+    setHeroImage(FALLBACK_IMG);
+    console.error(e);
   }
-
-  const results = await Promise.allSettled(FEEDS.map(fetchFromWorker));
-  let all = [];
-
-  for (const r of results){
-    if (r.status === "fulfilled") all = all.concat(r.value);
-  }
-
-  all = dedupeByLink(all);
-  all.sort((a,b) => dateMs(b.pubDate) - dateMs(a.pubDate));
-  all = all.slice(0, MAX_ITEMS);
-
-  if (!all.length){
-    titleEl.textContent = "Sem notícias no momento";
-    sourceEl.textContent = "Fonte";
-    sourceIcon.style.display = "none";
-    dateEl.style.display = "none";
-    setHeroImage(null);
-    return;
-  }
-
-  const seed = windowSeed(UI_REFRESH_HOURS);
-  const shuffled = shuffleDeterministic(all, seed);
-
-  const start = loadIndexFromStorage(shuffled.length);
-  NEWS = shuffled;
-  idx = start;
-
-  renderCurrent();
-
-  if (rotateTimer) clearInterval(rotateTimer);
-  rotateTimer = setInterval(renderCurrent, ROTATE_EVERY_MS);
 }
 
-loadNews();
-setInterval(loadNews, UI_REFRESH_HOURS * 60 * 60 * 1000);
+// primeira carga
+refreshAll();
+
+// recarrega lista a cada X horas (mas a rotação continua)
+setInterval(refreshAll, UI_REFRESH_HOURS * 60 * 60 * 1000);
 </script>
 </body>
 </html>
