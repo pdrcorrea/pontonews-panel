@@ -8,209 +8,25 @@
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800;900&display=swap" rel="stylesheet"/>
 
+<link rel="stylesheet" href="./css/pv-base.css">
+
 <style>
+  /* Ajustes do painel Notícias (só o conteúdo/hero) */
   :root{
-    /* ===== PONTO VIEW THEME (igual padrão) ===== */
-    --header: linear-gradient(180deg,#2f6f9d 0%,#184c75 55%,#0f3b5e 100%);
-    --bg: radial-gradient(1200px 900px at 25% 10%, rgba(87,184,231,.22), rgba(10,46,62,0) 60%),
-          radial-gradient(900px 700px at 75% 80%, rgba(52,198,208,.14), rgba(6,18,24,0) 65%),
-          radial-gradient(1400px 1100px at 50% 55%, #0a2232 0%, #081423 62%, #040a0f 100%);
-    --card:#ffffff;
-    --line:#e6edf7;
-    --chip:#f3f7ff;
-    --muted:#6b7788;
-    --ink:#0e1b2a;
-
-    --radius:22px;
-    --shadow:0 18px 60px rgba(2,10,23,.18);
-
-    /* Safe padding padrão (igual painéis clima/ônibus) */
-    --safe: clamp(14px, 2.2vw, 32px);
-
-    /* Tipos responsivos */
-    --t-title: clamp(22px, 2.1vw, 34px);
-    --t-sub:   clamp(12px, 1.05vw, 16px);
-    --t-clock: clamp(42px, 4.2vw, 78px);
-
-    --t-headline: clamp(30px, 4.4vw, 70px);
-    --t-chip: clamp(12px, 1.1vw, 16px);
+    /* se quiser igualar 100% o header aos outros: não mexa nisso */
+    --pvHeaderGrad: linear-gradient(180deg,#2f6f9d 0%,#184c75 55%,#0f3b5e 100%);
   }
 
-  *{box-sizing:border-box}
-  html,body{height:100%}
-
-  body{
-    margin:0;
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    background:var(--bg);
-    color:var(--ink);
-    overflow:hidden;
-  }
-
-  /* ===== FULLSCREEN COM SAFE PADDING ===== */
-  .frame{
-    width:100vw;
-    height:100vh;
-    padding:var(--safe);
-    display:flex;
-  }
-
-  .panel{
-    width:100%;
-    height:100%;
-    background:var(--card);
-    border-radius:var(--radius);
-    overflow:hidden;
-    box-shadow:var(--shadow);
-    display:flex;
-    flex-direction:column;
-    animation:fade .6s ease forwards;
-  }
-
-  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-
-  /* ===== HEADER ===== */
-  .header{
-    padding: clamp(14px, 1.4vw, 22px) clamp(16px, 1.8vw, 26px);
-    background:var(--header);
-    color:#fff;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:16px;
-    border-bottom:1px solid rgba(255,255,255,.12);
-    min-width:0;
-  }
-
-  .h-left{display:flex;gap:14px;align-items:center;min-width:0}
-  .iconBadge{
-    width:clamp(44px, 3.2vw, 62px);
-    height:clamp(44px, 3.2vw, 62px);
-    border-radius:16px;
-    display:grid;
-    place-items:center;
-    background:rgba(255,255,255,.10);
-    border:1px solid rgba(255,255,255,.22);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
-    flex:0 0 auto;
-  }
-  .iconBadge .material-icons-outlined{font-size:clamp(22px, 2vw, 30px); opacity:.95}
-
-  .titles{display:flex;flex-direction:column;gap:6px;min-width:0}
-  .title{
-    font-size:var(--t-title);
-    font-weight:900;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .sub{
-    font-size:var(--t-sub);
-    font-weight:800;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    opacity:.92;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-
-  .h-right{
-    text-align:right;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    align-items:flex-end;
-    min-width:max-content;
-  }
-  .clock{
-    font-size:var(--t-clock);
-    font-weight:900;
-    line-height:1;
-    letter-spacing:.02em;
-  }
-
-  /* ===== SUBBAR ===== */
-  .subbar{
-    background:var(--chip);
-    border-bottom:1px solid var(--line);
-    padding: 10px clamp(16px, 1.8vw, 26px);
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:12px;
-    min-width:0;
-  }
-  .subbarLeft{
-    font-size:var(--t-sub);
-    font-weight:900;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:#1c2c41;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
-  .subbarRight{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    justify-content:flex-end;
-    min-width:0;
-    white-space:nowrap;
-  }
-
-  .pill{
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    padding:8px 12px;
-    border-radius:999px;
-    background:rgba(255,255,255,.78);
-    border:1px solid rgba(15,23,42,.08);
-    color:#0f172a;
-    font-weight:900;
-    font-size:var(--t-chip);
-  }
-  .dot{
-    width:10px;height:10px;border-radius:50%;
-    background:#22c55e;
-    box-shadow:0 0 0 0 rgba(34,197,94,.55);
-    animation:pulse 1.6s infinite;
-  }
-  .dot.off{background:#ef4444; animation:none; box-shadow:none;}
-  @keyframes pulse{
-    0%{box-shadow:0 0 0 0 rgba(34,197,94,.50)}
-    70%{box-shadow:0 0 0 10px rgba(34,197,94,0)}
-    100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
-  }
-
-  .metaSmall{
-    font-size:var(--t-sub);
-    font-weight:900;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    color:#2b3b52;
-    opacity:.9;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    max-width:min(52vw, 700px);
-  }
-
-  /* ===== HERO ===== */
   .hero{
     position:relative;
-    flex:1 1 auto;
+    width:100%;
+    height:100%;
     min-height:0;
     overflow:hidden;
     background:
       radial-gradient(1200px 800px at 40% 30%, rgba(17,24,39,.25), rgba(17,24,39,0) 60%),
       linear-gradient(180deg, #0b1220 0%, #111827 100%);
   }
-
   .hero img{
     position:absolute;
     inset:0;
@@ -220,8 +36,6 @@
     filter:saturate(1.02) contrast(1.03);
     transform:scale(1.01);
   }
-
-  /* overlay forte p/ contraste mesmo sem imagem */
   .overlay{
     position:absolute;
     inset:0;
@@ -229,46 +43,41 @@
       linear-gradient(180deg, rgba(0,0,0,.20) 0%, rgba(0,0,0,.70) 62%, rgba(0,0,0,.88) 100%),
       radial-gradient(900px 520px at 30% 75%, rgba(0,0,0,.55), rgba(0,0,0,0) 65%);
   }
-
   .content{
     position:absolute;
-    inset:auto clamp(16px, 1.8vw, 26px) clamp(16px, 1.8vw, 22px);
-    bottom: clamp(16px, 1.8vw, 22px);
+    inset:auto var(--pad) var(--pad);
+    bottom: var(--pad);
     color:#fff;
     display:flex;
     flex-direction:column;
     gap: 14px;
     max-width: min(1200px, 92vw);
   }
-
   .headline{
-    font-size:var(--t-headline);
+    font-size: clamp(30px, 4.4vw, 70px);
     font-weight:900;
     line-height:1.05;
     letter-spacing:-.01em;
     text-shadow: 0 8px 24px rgba(0,0,0,.35);
   }
-
   .metaRow{
     display:flex;
     gap:10px;
     flex-wrap:wrap;
     align-items:center;
   }
-
   .chip{
     background:rgba(255,255,255,.92);
     color:#0f172a;
     padding:10px 12px;
     border-radius:999px;
-    font-size:var(--t-chip);
+    font-size: clamp(12px, 1.1vw, 16px);
     font-weight:900;
     display:flex;
     align-items:center;
     gap:10px;
     box-shadow: 0 10px 26px rgba(0,0,0,.15);
   }
-
   .sourceIcon{
     width:26px;height:26px;border-radius:999px;
     background:rgba(15,23,42,.10);
@@ -278,104 +87,88 @@
     flex:0 0 auto;
   }
   .sourceIcon img{width:18px;height:18px;object-fit:contain;display:block}
-
-  .dateChip{opacity:.98}
-
-  /* ===== FOOTER ===== */
-  .footer{
-    flex:0 0 auto;
-    height: clamp(46px, 5.4vh, 72px);
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    padding: 10px clamp(16px, 1.8vw, 26px);
-    border-top:1px solid var(--line);
-    background: transparent;
-  }
-  .footer img{
-    height: clamp(16px, 2.4vh, 22px);
-    opacity:.80;
-    display:block;
-  }
-
-  /* ===== VERTICAL AJUSTES (sem quebrar) ===== */
-  @media (max-aspect-ratio: 10/16){
-    .content{max-width: 92vw;}
-    .headline{letter-spacing:-.02em;}
-  }
 </style>
 </head>
 
 <body>
-  <div class="frame">
-    <section class="panel">
+  <div class="pvPage">
+    <section class="pvShell">
+
       <!-- HEADER -->
-      <div class="header">
-        <div class="h-left">
-          <div class="iconBadge" aria-hidden="true">
+      <header class="pvHeader">
+        <div class="pvHeaderLeft">
+          <div class="pvIconBadge" aria-hidden="true">
             <span class="material-icons-outlined">newspaper</span>
           </div>
-          <div class="titles">
-            <div class="title">NOTÍCIAS</div>
-            <div class="sub" id="subtitle">LOCAL • ES • BR</div>
+          <div class="pvTitles">
+            <h1 class="pvTitle">NOTÍCIAS</h1>
+            <div class="pvSubtitle" id="subtitle">LOCAL • ES • BR</div>
           </div>
         </div>
-        <div class="h-right">
-          <div class="clock" id="clock">--:--</div>
+
+        <div class="pvHeaderRight">
+          <div class="pvClock" id="clock">--:--</div>
         </div>
-      </div>
+      </header>
 
       <!-- SUBBAR -->
-      <div class="subbar">
-        <div class="subbarLeft" id="subLeft">MANCHETE ATUAL</div>
-
-        <div class="subbarRight">
-          <div class="metaSmall" id="scopeLabel">AGORA • BRASIL</div>
-
-          <div class="pill" id="pillOnline">
-            <span class="dot" id="dot"></span>
+      <div class="pvSubbar">
+        <div class="pvSubLeft" id="subLeft">MANCHETE ATUAL</div>
+        <div class="pvSubRight">
+          <div class="pvSubLeft" style="font-size:var(--t-sub); font-weight:900; letter-spacing:.12em; opacity:.9;" id="scopeLabel">
+            AGORA • BRASIL
+          </div>
+          <div class="pvPill" id="pillOnline">
+            <span class="pvDot" id="dot"></span>
             <span id="statusText">Online</span>
           </div>
         </div>
       </div>
 
-      <!-- HERO -->
-      <div class="hero">
-        <img id="image" alt="Imagem da notícia" />
-        <div class="overlay"></div>
+      <!-- CONTENT -->
+      <main class="pvContent">
+        <section class="pvCard">
+          <div class="hero">
+            <img id="image" alt="Imagem da notícia" />
+            <div class="overlay"></div>
 
-        <div class="content">
-          <div class="headline" id="title">Carregando…</div>
+            <div class="content">
+              <div class="headline" id="title">Carregando…</div>
 
-          <div class="metaRow">
-            <div class="chip">
-              <span class="sourceIcon" id="sourceIcon">
-                <img id="favicon" alt="" />
-              </span>
-              <span id="source">Fonte</span>
+              <div class="metaRow">
+                <div class="chip">
+                  <span class="sourceIcon" id="sourceIcon">
+                    <img id="favicon" alt="" />
+                  </span>
+                  <span id="source">Fonte</span>
+                </div>
+
+                <div class="chip" id="date"></div>
+              </div>
             </div>
-
-            <div class="chip dateChip" id="date"></div>
           </div>
-        </div>
-      </div>
+        </section>
+      </main>
 
       <!-- FOOTER -->
-      <div class="footer">
-        <img src="./assets/logo-pontoview.png" alt="PontoView"/>
-      </div>
+      <footer class="pvFooter">
+        <div class="pvFooterLeft"></div>
+        <div class="pvFooterRight">
+          <img class="pvLogo" src="./assets/logo-pontoview.png" alt="PontoView"/>
+        </div>
+      </footer>
+
     </section>
   </div>
 
 <script>
 /* ========= CONFIG ========= */
 const WORKER_API = "https://pontoview-api.pedrhc258.workers.dev/api/news";
-const UI_ROTATE_MS = 15000;     // troca manchete
-const UI_REFRESH_HOURS = 6;     // recarrega lista (usa seed p/ variar ordem)
+const UI_ROTATE_MS = 15000;
+const UI_REFRESH_HOURS = 6;
 const LIMIT = 30;
 const SAFE = 1;
 
-/* fallback visual (quando imagem falhar ou vier vazia) */
 const FALLBACK_IMG = "https://images.unsplash.com/photo-1504711432869-0df30a7e04ad?auto=format&fit=crop&w=1600&q=70";
 
 /* ===== CLOCK ===== */
@@ -414,34 +207,24 @@ function fmtPublished(str){
   const mi = String(d.getMinutes()).padStart(2,"0");
   return `${dd}/${mm}/${yyyy} • ${hh}:${mi}`;
 }
-
 function extractSource(url=""){
   try{
     const host = new URL(url).hostname.replace("www.","");
     const base = host.split(".")[0] || "FONTE";
     return base.toUpperCase();
-  }catch{
-    return "FONTE";
-  }
+  }catch{ return "FONTE"; }
 }
-
 function faviconForLink(url=""){
   try{
     const u = new URL(url);
     return `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`;
-  }catch{
-    return "";
-  }
+  }catch{ return ""; }
 }
-
-/* wsrv.nl proxy (reduz hotlink/cors em algumas fontes) */
 function imgProxy(url){
   if(!url) return null;
   const clean = String(url).trim();
   if(!clean) return null;
   if(clean.includes("wsrv.nl/?url=")) return clean;
-
-  // wsrv prefere sem protocolo
   const noProto = clean.replace(/^https?:\/\//i,"");
   return "https://wsrv.nl/?url=" + encodeURIComponent(noProto) + "&w=1600&fit=cover&output=webp";
 }
@@ -454,14 +237,10 @@ let rotateTimer = null;
 async function fetchFromWorker(){
   const seed = Date.now();
   const url = `${WORKER_API}?ttlHours=${UI_REFRESH_HOURS}&limit=${LIMIT}&safe=${SAFE}&seed=${seed}`;
-
   const res = await fetch(url, { cache:"no-store" });
   const data = await res.json();
-
   if(!res.ok || !data || data.ok !== true) throw new Error("Worker inválido");
-
   const items = Array.isArray(data.items) ? data.items : [];
-  // normaliza para o render
   return items.map(it => ({
     title: (it.title || "").trim() || "Notícia",
     link: it.link || "",
@@ -475,18 +254,12 @@ async function fetchFromWorker(){
 function setHeroImage(url){
   const imgEl = document.getElementById("image");
   const finalUrl = imgProxy(url) || FALLBACK_IMG;
-
   imgEl.src = finalUrl;
 
-  // preload + fallback
   const pre = new Image();
-  pre.onload = ()=>{};
-  pre.onerror = ()=>{
-    if(imgEl.src !== FALLBACK_IMG) imgEl.src = FALLBACK_IMG;
-  };
+  pre.onerror = ()=>{ if(imgEl.src !== FALLBACK_IMG) imgEl.src = FALLBACK_IMG; };
   pre.src = finalUrl;
 }
-
 document.getElementById("image").addEventListener("error", ()=>{
   const imgEl = document.getElementById("image");
   if(imgEl.src !== FALLBACK_IMG) imgEl.src = FALLBACK_IMG;
@@ -494,7 +267,6 @@ document.getElementById("image").addEventListener("error", ()=>{
 
 function renderCurrent(){
   if(!NEWS.length) return;
-
   const item = NEWS[idx % NEWS.length];
   idx++;
 
@@ -512,27 +284,17 @@ function renderCurrent(){
 
   const pub = fmtPublished(item.pubDate);
   const dateEl = document.getElementById("date");
-  if(pub){
-    dateEl.textContent = pub;
-    dateEl.style.display = "flex";
-  } else {
-    dateEl.textContent = "";
-    dateEl.style.display = "none";
-  }
+  dateEl.textContent = pub || "";
+  dateEl.style.display = pub ? "flex" : "none";
 
-  // scope label simples (pode evoluir no Worker)
   document.getElementById("scopeLabel").textContent = "AGORA • BRASIL";
-
   setHeroImage(item.image);
 }
 
 async function refreshAll(){
   try{
     NEWS = await fetchFromWorker();
-    if(!NEWS.length){
-      throw new Error("Sem itens");
-    }
-    // começa em um ponto diferente a cada refresh
+    if(!NEWS.length) throw new Error("Sem itens");
     idx = Math.floor(Math.random() * NEWS.length);
 
     renderCurrent();
@@ -549,10 +311,7 @@ async function refreshAll(){
   }
 }
 
-// primeira carga
 refreshAll();
-
-// recarrega lista a cada X horas (mas a rotação continua)
 setInterval(refreshAll, UI_REFRESH_HOURS * 60 * 60 * 1000);
 </script>
 </body>
