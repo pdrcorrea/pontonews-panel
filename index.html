@@ -502,8 +502,25 @@ function favicon(u){
 }
 function imgProxy(u){
   if(!u) return null;
-  return "https://wsrv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+"&w=1600&fit=cover";
+
+  // garante URL absoluta
+  let url = String(u).trim();
+  if(!url) return null;
+
+  if(url.startsWith("//")){
+    url = "https:" + url;
+  }
+
+  if(!/^https?:\/\//i.test(url)){
+    return null;
+  }
+
+  // ✅ proxy mais compatível (weserv)
+  return "https://images.weserv.nl/?url="
+    + encodeURIComponent(url.replace(/^https?:\/\//i,""))
+    + "&w=1600&h=900&fit=cover&output=webp";
 }
+
 
 /* ===== DATA ===== */
 let NEWS=[],idx=0,timer=null;
