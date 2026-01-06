@@ -407,199 +407,161 @@
 <script>
 /* ========= CONFIG ========= */
 const WORKER_API = "https://pontoview-api.pedrhc258.workers.dev/api/news";
-const UI_ROTATE_MS = 15000;     // troca manchete
-const UI_REFRESH_HOURS = 6;     // recarrega lista
-const LIMIT = 30;
+const UI_ROTATE_MS = 15000;
+const UI_REFRESH_HOURS = 6;
+const LIMIT = 60;
 const SAFE = 1;
 
-/* ✅ imagem padrão agradável (quando falhar) */
-const FALLBACK_IMG =
-  "https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1600&q=70";
+/* ===== FILTROS ===== */
+const MAX_DAYS = 3;
+
+const ALLOWED_DOMAINS = [
+  "es.gov.br",
+  "vitoria.es.gov.br",
+  "linhares.es.gov.br",
+  "colatina.es.gov.br",
+  "cachoeiro.es.gov.br",
+  "agazeta.com.br",
+  "folhavitoria.com.br",
+  "simnoticias.com.br",
+  "agenciabrasil.ebc.com.br",
+  "g1.globo.com",
+  "esfala.com.br"
+];
+
+const BLOCK_TERMS = [
+  "assista","ao vivo","video","vídeo","veja","urgente",
+  "morre","morte","assassin","homic","tirote","balead",
+  "estupro","tragédia","explos","incênd","enchent"
+];
+
+const ES_WORDS = [
+  "espírito santo",
+  "espirito santo",
+  " es ",      // sigla isolada
+  "- es",      // ex: Vitória - ES
+  "/es",       // URLs
+  "es/",
+
+  // termos administrativos comuns
+  "prefeitura",
+  "governo do estado",
+  "governo do es",
+  "secretaria estadual",
+  "defesa civil es",
+  "detran es",
+  "sedu es",
+  "ses es"
+];
+
 
 /* ===== CLOCK ===== */
 const clock = document.getElementById("clock");
-function tickClock(){
-  clock.textContent = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-}
-tickClock();
-setInterval(tickClock, 1000);
+setInterval(()=>clock.textContent=
+  new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),1000);
 
 /* ===== ONLINE / OFFLINE ===== */
 const statusText = document.getElementById("statusText");
 const dot = document.getElementById("dot");
 function updateStatus(){
-  if (navigator.onLine){
-    statusText.textContent = "Online";
-    dot.classList.remove("off");
-  } else {
-    statusText.textContent = "Offline";
-    dot.classList.add("off");
+  if(navigator.onLine){
+    statusText.textContent="Online"; dot.classList.remove("off");
+  }else{
+    statusText.textContent="Offline"; dot.classList.add("off");
   }
 }
-window.addEventListener("online", updateStatus);
-window.addEventListener("offline", updateStatus);
 updateStatus();
+window.addEventListener("online",updateStatus);
+window.addEventListener("offline",updateStatus);
 
 /* ===== HELPERS ===== */
-function fmtPublished(str){
-  if (!str) return "";
-  const d = new Date(str);
-  if (Number.isNaN(d.getTime())) return "";
-  const dd = String(d.getDate()).padStart(2,"0");
-  const mm = String(d.getMonth()+1).padStart(2,"0");
-  const yyyy = d.getFullYear();
-  const hh = String(d.getHours()).padStart(2,"0");
-  const mi = String(d.getMinutes()).padStart(2,"0");
-  return `${dd}/${mm}/${yyyy} • ${hh}:${mi}`;
+function norm(s){
+  return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
+}
+function host(u){
+  try{return new URL(u).hostname.replace("www.","");}catch{return""}
+}
+function allowedDomain(u){
+  const h=host(u);
+  return ALLOWED_DOMAINS.some(d=>h===d||h.endsWith("."+d));
+}
+function recent(d){
+  const t=new Date(d).getTime();
+  return !isNaN(t) && Date.now()-t <= MAX_DAYS*86400000;
+}
+function blocked(it){
+  const h=norm(it.title+" "+it.link);
+  return BLOCK_TERMS.some(w=>h.includes(w));
+}
+function looksES(it){
+  const h=norm(it.title+" "+it.link);
+  return ES_WORDS.some(w=>h.includes(norm(w)));
+}
+function favicon(u){
+  try{return "https://www.google.com/s2/favicons?domain="+new URL(u).hostname+"&sz=64"}catch{return""}
+}
+function imgProxy(u){
+  if(!u) return null;
+  return "https://wsrv.nl/?url="+encodeURIComponent(u.replace(/^https?:\/\//,""))+"&w=1600&fit=cover";
 }
 
-function extractSource(url=""){
-  try{
-    const host = new URL(url).hostname.replace("www.","");
-    const base = host.split(".")[0] || "FONTE";
-    return base.toUpperCase();
-  }catch{
-    return "FONTE";
-  }
-}
+/* ===== DATA ===== */
+let NEWS=[],idx=0,timer=null;
 
-function faviconForLink(url=""){
-  try{
-    const u = new URL(url);
-    return `https://www.google.com/s2/favicons?domain=${u.hostname}&sz=64`;
-  }catch{
-    return "";
-  }
-}
+async function fetchNews(){
+  const res=await fetch(`${WORKER_API}?limit=${LIMIT}&safe=${SAFE}`,{cache:"no-store"});
+  const j=await res.json();
+  if(!j?.items) throw 0;
 
-/* wsrv.nl proxy (reduz hotlink/cors em algumas fontes) */
-function imgProxy(url){
-  if(!url) return null;
-  const clean = String(url).trim();
-  if(!clean) return null;
-  if(clean.includes("wsrv.nl/?url=")) return clean;
-
-  const noProto = clean.replace(/^https?:\/\//i,"");
-  return "https://wsrv.nl/?url=" + encodeURIComponent(noProto) + "&w=1600&fit=cover&output=webp";
-}
-
-/* ===== DATA FLOW ===== */
-let NEWS = [];
-let idx = 0;
-let rotateTimer = null;
-
-async function fetchFromWorker(){
-  const seed = Date.now();
-  const url = `${WORKER_API}?ttlHours=${UI_REFRESH_HOURS}&limit=${LIMIT}&safe=${SAFE}&seed=${seed}`;
-
-  const res = await fetch(url, { cache:"no-store" });
-  const data = await res.json();
-
-  if(!res.ok || !data || data.ok !== true) throw new Error("Worker inválido");
-
-  const items = Array.isArray(data.items) ? data.items : [];
-  return items.map(it => ({
-    title: (it.title || "").trim() || "Notícia",
-    link: it.link || "",
-    pubDate: it.pubDate || "",
-    image: it.image || "",
-    sourceName: extractSource(it.link || ""),
-    favicon: faviconForLink(it.link || "")
+  return j.items.map(it=>({
+    title: it.title||"Notícia",
+    link: it.link||"",
+    pub: it.pubDate||it.publishedAt||"",
+    img: it.image||"",
+    fav: favicon(it.link||"")
   }));
 }
 
-function setHeroImage(url){
-  const hero = document.getElementById("hero");
-  const imgEl = document.getElementById("image");
+function applyFilters(list){
+  let out=list
+    .filter(i=>allowedDomain(i.link))
+    .filter(i=>recent(i.pub))
+    .filter(i=>!blocked(i));
 
-  const finalUrl = imgProxy(url) || FALLBACK_IMG;
-
-  // tenta carregar primeiro (pré-load)
-  const pre = new Image();
-  pre.onload = ()=>{
-    hero.classList.remove("noimg");
-    imgEl.src = finalUrl;
-  };
-  pre.onerror = ()=>{
-    // ✅ se falhar, mantém fundo degradê + coloca fallback
-    hero.classList.remove("noimg");
-    imgEl.src = FALLBACK_IMG;
-  };
-  pre.src = finalUrl;
+  if(out.length){
+    const local=out.filter(i=>looksES(i));
+    if(local.length) out=local.concat(out.filter(i=>!looksES(i)));
+  }
+  return out;
 }
 
-document.getElementById("image").addEventListener("error", ()=>{
-  const hero = document.getElementById("hero");
-  const imgEl = document.getElementById("image");
-
-  // ✅ se o fallback também falhar, some com a imagem (fica só o degradê bonito)
-  if (imgEl.src && imgEl.src.includes("unsplash.com")){
-    hero.classList.add("noimg");
-  } else {
-    imgEl.src = FALLBACK_IMG;
-  }
-});
-
-function renderFooterMeta(item){
-  const fav = document.getElementById("favicon");
-  const meta = document.getElementById("footMeta");
-
-  const src = (item.sourceName || "FONTE").toUpperCase();
-  const pub = fmtPublished(item.pubDate) || "—";
-
-  // favicon dentro da bolinha
-  if (item.favicon){
-    fav.src = item.favicon;
-    fav.style.display = "block";
-  } else {
-    fav.style.display = "none";
-  }
-
-  meta.textContent = `${src} • ${pub}`;
-}
-
-function renderCurrent(){
+function render(){
   if(!NEWS.length) return;
+  const n=NEWS[idx++%NEWS.length];
 
-  const item = NEWS[idx % NEWS.length];
-  idx++;
-
-  document.getElementById("title").textContent = item.title || "Notícia";
-
-  renderFooterMeta(item);
-  setHeroImage(item.image);
+  document.getElementById("title").textContent=n.title;
+  document.getElementById("image").src=imgProxy(n.img);
+  document.getElementById("favicon").src=n.fav;
+  document.getElementById("footMeta").textContent=
+    `${host(n.link).toUpperCase()} • ${new Date(n.pub).toLocaleString("pt-BR")}`;
 }
 
-async function refreshAll(){
+async function refresh(){
   try{
-    NEWS = await fetchFromWorker();
-    if(!NEWS.length) throw new Error("Sem itens");
-
-    idx = Math.floor(Math.random() * NEWS.length);
-
-    renderCurrent();
-
-    if(rotateTimer) clearInterval(rotateTimer);
-    rotateTimer = setInterval(renderCurrent, UI_ROTATE_MS);
-  }catch(e){
-    document.getElementById("title").textContent = "Sem notícias no momento";
-
-
-    // footer neutro
-    document.getElementById("favicon").style.display = "none";
-    document.getElementById("footMeta").textContent = "PONTOVIEW • —";
-
-    // visual agradável
-    setHeroImage(FALLBACK_IMG);
-    console.error(e);
+    const raw=await fetchNews();
+    NEWS=applyFilters(raw);
+    if(!NEWS.length) throw 0;
+    idx=Math.floor(Math.random()*NEWS.length);
+    render();
+    clearInterval(timer);
+    timer=setInterval(render,UI_ROTATE_MS);
+  }catch{
+    document.getElementById("title").textContent="Sem notícias no momento";
   }
 }
 
-// primeira carga
-refreshAll();
-
-// recarrega lista a cada X horas
-setInterval(refreshAll, UI_REFRESH_HOURS * 60 * 60 * 1000);
+refresh();
+setInterval(refresh,UI_REFRESH_HOURS*3600000);
 </script>
 </body>
 </html>
