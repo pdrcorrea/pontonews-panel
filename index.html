@@ -356,8 +356,7 @@
           </div>
           <div class="titles">
             <div class="title">NOTÍCIAS</div>
-            <div class="sub" id="subtitle">LOCAL • ES • BR</div>
-          </div>
+            </div>
         </div>
         <div class="h-right">
           <div class="clock" id="clock">--:--</div>
@@ -369,8 +368,6 @@
         <div class="subbarLeft" id="subLeft">MANCHETE ATUAL</div>
 
         <div class="subbarRight">
-          <div class="metaSmall" id="scopeLabel">AGORA • BRASIL</div>
-
           <div class="pill" id="pillOnline">
             <span class="dot" id="dot"></span>
             <span id="statusText">Online</span>
@@ -568,7 +565,6 @@ function renderCurrent(){
   idx++;
 
   document.getElementById("title").textContent = item.title || "Notícia";
-  document.getElementById("scopeLabel").textContent = "AGORA • BRASIL";
 
   renderFooterMeta(item);
   setHeroImage(item.image);
@@ -587,7 +583,7 @@ async function refreshAll(){
     rotateTimer = setInterval(renderCurrent, UI_ROTATE_MS);
   }catch(e){
     document.getElementById("title").textContent = "Sem notícias no momento";
-    document.getElementById("scopeLabel").textContent = "AGORA • BRASIL";
+
 
     // footer neutro
     document.getElementById("favicon").style.display = "none";
