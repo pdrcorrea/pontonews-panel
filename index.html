@@ -66,11 +66,14 @@
     box-shadow:var(--shadow);
     display:flex;
     flex-direction:column;
-    animation:fade .6s ease forwards;
     min-height:0;
-  }
 
-  @keyframes fade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    /* ✅ animação suave de entrada (substitui o fade antigo) */
+    opacity:0;
+    transform: translateY(10px);
+    animation: panelIn 700ms cubic-bezier(.22,1,.36,1) forwards;
+  }
+  @keyframes panelIn{ to{opacity:1; transform:none;} }
 
   /* ===== HEADER ===== */
   .header{
@@ -191,19 +194,6 @@
     100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
   }
 
-  .metaSmall{
-    font-size:var(--t-sub);
-    font-weight:900;
-    letter-spacing:.12em;
-    text-transform:uppercase;
-    color:#2b3b52;
-    opacity:.9;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    max-width:min(52vw, 700px);
-  }
-
   /* ===== HERO ===== */
   .hero{
     position:relative;
@@ -218,7 +208,6 @@
       linear-gradient(180deg, #0b1220 0%, #0a1b2e 45%, #0b1020 100%);
   }
 
-  /* textura leve */
   .hero::before{
     content:"";
     position:absolute;
@@ -240,12 +229,11 @@
     object-fit:cover;
     filter:saturate(1.02) contrast(1.03);
     transform:scale(1.01);
-    opacity:.78; /* ✅ evita “preto chapado” com overlay forte */
+    opacity:.78;
     transition: opacity 220ms ease;
   }
-  .hero.noimg img{ opacity:0; } /* ✅ some com imagem quebrada */
+  .hero.noimg img{ opacity:0; }
 
-  /* ✅ overlay mais suave e elegante */
   .overlay{
     position:absolute;
     inset:0;
@@ -263,6 +251,15 @@
     flex-direction:column;
     gap: 10px;
     max-width: min(1280px, 92vw);
+
+    /* ✅ crossfade */
+    opacity:1;
+    transform:none;
+    transition: opacity 280ms ease, transform 280ms ease;
+  }
+  .content.fadeOut{
+    opacity:0;
+    transform: translateY(6px);
   }
 
   .headline{
@@ -279,7 +276,7 @@
     height: clamp(46px, 5.4vh, 72px);
     display:flex;
     align-items:center;
-    justify-content:space-between; /* ✅ meta esquerda + logo direita */
+    justify-content:space-between;
     padding: 10px clamp(16px, 1.8vw, 26px);
     border-top:1px solid var(--line);
     background: transparent;
@@ -295,7 +292,6 @@
     overflow:hidden;
   }
 
-  /* ✅ bolinha do badge com favicon dentro */
   .siteBubble{
     width:26px;
     height:26px;
@@ -336,7 +332,6 @@
     display:block;
   }
 
-  /* ===== VERTICAL AJUSTES ===== */
   @media (max-aspect-ratio: 10/16){
     .content{max-width: 92vw;}
     .headline{letter-spacing:-.02em;}
@@ -356,7 +351,7 @@
           </div>
           <div class="titles">
             <div class="title">NOTÍCIAS</div>
-            </div>
+          </div>
         </div>
         <div class="h-right">
           <div class="clock" id="clock">--:--</div>
@@ -387,7 +382,6 @@
 
       <!-- FOOTER -->
       <div class="footer">
-        <!-- ✅ Fonte + data discretos -->
         <div class="footerLeft" aria-label="Fonte e data">
           <span class="siteBubble" aria-hidden="true">
             <img id="favicon" alt="" />
@@ -395,7 +389,6 @@
           <div class="footMeta" id="footMeta">FONTE • — • —</div>
         </div>
 
-        <!-- ✅ Logo à direita -->
         <div class="footerRight">
           <img src="./assets/logo-pontoview.png" alt="PontoView"/>
         </div>
@@ -407,7 +400,7 @@
 <script>
 /* ========= CONFIG ========= */
 const WORKER_API = "https://pontoview-api.pedrhc258.workers.dev/api/news";
-const UI_ROTATE_MS = 15000;
+const UI_ROTATE_MS = 15000;      // se quiser só no refresh: coloque 0
 const UI_REFRESH_HOURS = 6;
 const LIMIT = 60;
 const SAFE = 1;
@@ -436,29 +429,19 @@ const BLOCK_TERMS = [
 ];
 
 const ES_WORDS = [
-  "espírito santo",
-  "espirito santo",
-  " es ",      // sigla isolada
-  "- es",      // ex: Vitória - ES
-  "/es",       // URLs
-  "es/",
-
-  // termos administrativos comuns
-  "prefeitura",
-  "governo do estado",
-  "governo do es",
-  "secretaria estadual",
-  "defesa civil es",
-  "detran es",
-  "sedu es",
-  "ses es"
+  "espírito santo","espirito santo",
+  " es ","- es","/es","es/",
+  "prefeitura","governo do estado","governo do es","secretaria estadual",
+  "defesa civil es","detran es","sedu es","ses es"
 ];
-
 
 /* ===== CLOCK ===== */
 const clock = document.getElementById("clock");
-setInterval(()=>clock.textContent=
-  new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"}),1000);
+function tickClock(){
+  clock.textContent = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
+}
+tickClock();
+setInterval(tickClock, 1000);
 
 /* ===== ONLINE / OFFLINE ===== */
 const statusText = document.getElementById("statusText");
@@ -500,42 +483,40 @@ function looksES(it){
 function favicon(u){
   try{return "https://www.google.com/s2/favicons?domain="+new URL(u).hostname+"&sz=64"}catch{return""}
 }
+
+/* ✅ proxy de imagem (weserv) */
 function imgProxy(u){
   if(!u) return null;
 
-  // garante URL absoluta
   let url = String(u).trim();
   if(!url) return null;
 
-  if(url.startsWith("//")){
-    url = "https:" + url;
-  }
+  if(url.startsWith("//")) url = "https:" + url;
+  if(!/^https?:\/\//i.test(url)) return null;
 
-  if(!/^https?:\/\//i.test(url)){
-    return null;
-  }
-
-  // ✅ proxy mais compatível (weserv)
   return "https://images.weserv.nl/?url="
     + encodeURIComponent(url.replace(/^https?:\/\//i,""))
     + "&w=1600&h=900&fit=cover&output=webp";
 }
 
-
 /* ===== DATA ===== */
-let NEWS=[],idx=0,timer=null;
+let NEWS=[], idx=0, timer=null;
 
 async function fetchNews(){
-  const res=await fetch(`${WORKER_API}?limit=${LIMIT}&safe=${SAFE}`,{cache:"no-store"});
-  const j=await res.json();
-  if(!j?.items) throw 0;
+  // ✅ a cada refresh/reload, muda seed e evita qualquer cache intermediário
+  const seed = String(Date.now());
+  const url = `${WORKER_API}?limit=${LIMIT}&safe=${SAFE}&seed=${seed}&_=${seed}`;
+
+  const res = await fetch(url, { cache:"no-store" });
+  const j = await res.json();
+  if(!j?.items) throw new Error("Sem items");
 
   return j.items.map(it=>({
-    title: it.title||"Notícia",
-    link: it.link||"",
-    pub: it.pubDate||it.publishedAt||"",
-    img: it.image||"",
-    fav: favicon(it.link||"")
+    title: it.title || "Notícia",
+    link: it.link || "",
+    pub: it.pubDate || it.publishedAt || "",
+    img: it.image || "",
+    fav: favicon(it.link || "")
   }));
 }
 
@@ -545,40 +526,78 @@ function applyFilters(list){
     .filter(i=>recent(i.pub))
     .filter(i=>!blocked(i));
 
+  // ✅ se houver bastante ES, prioriza ES primeiro (mas não zera Brasil)
   if(out.length){
-    const local=out.filter(i=>looksES(i));
-    if(local.length) out=local.concat(out.filter(i=>!looksES(i)));
+    const es = out.filter(i=>looksES(i));
+    const br = out.filter(i=>!looksES(i));
+    if(es.length) out = es.concat(br);
   }
   return out;
 }
 
+/* ✅ crossfade na troca */
 function render(){
   if(!NEWS.length) return;
-  const n=NEWS[idx++%NEWS.length];
 
-  document.getElementById("title").textContent=n.title;
-  document.getElementById("image").src=imgProxy(n.img);
-  document.getElementById("favicon").src=n.fav;
-  document.getElementById("footMeta").textContent=
-    `${host(n.link).toUpperCase()} • ${new Date(n.pub).toLocaleString("pt-BR")}`;
+  const n = NEWS[idx++ % NEWS.length];
+  const contentEl = document.querySelector(".content");
+  contentEl.classList.add("fadeOut");
+
+  setTimeout(()=>{
+    document.getElementById("title").textContent = n.title;
+
+    const img = imgProxy(n.img);
+    const imgEl = document.getElementById("image");
+    const hero = document.getElementById("hero");
+
+    if(img){
+      hero.classList.remove("noimg");
+      imgEl.src = img;
+    }else{
+      hero.classList.add("noimg");
+      imgEl.removeAttribute("src");
+    }
+
+    const favEl = document.getElementById("favicon");
+    favEl.src = n.fav || "";
+    favEl.style.display = n.fav ? "block" : "none";
+
+    const dt = new Date(n.pub);
+    const when = isNaN(dt.getTime()) ? "—" : dt.toLocaleString("pt-BR");
+    document.getElementById("footMeta").textContent =
+      `${host(n.link).toUpperCase()} • ${when}`;
+
+    requestAnimationFrame(()=> contentEl.classList.remove("fadeOut"));
+  }, 220);
 }
 
 async function refresh(){
   try{
-    const raw=await fetchNews();
-    NEWS=applyFilters(raw);
-    if(!NEWS.length) throw 0;
-    idx=Math.floor(Math.random()*NEWS.length);
+    const raw = await fetchNews();
+    NEWS = applyFilters(raw);
+    if(!NEWS.length) throw new Error("Sem notícias");
+
+    // ✅ começa aleatório a cada refresh (inclui refresh da página)
+    idx = Math.floor(Math.random() * NEWS.length);
+
     render();
-    clearInterval(timer);
-    timer=setInterval(render,UI_ROTATE_MS);
-  }catch{
+
+    if(timer) clearInterval(timer);
+    if(UI_ROTATE_MS > 0){
+      timer = setInterval(render, UI_ROTATE_MS);
+    }
+  }catch(e){
     document.getElementById("title").textContent="Sem notícias no momento";
+    document.getElementById("footMeta").textContent="PONTOVIEW • —";
+    console.warn(e);
   }
 }
 
+// primeira carga (sempre que abrir/recarregar a página)
 refresh();
-setInterval(refresh,UI_REFRESH_HOURS*3600000);
+
+// recarrega lista a cada X horas (mantém)
+setInterval(refresh, UI_REFRESH_HOURS*3600000);
 </script>
 </body>
 </html>
