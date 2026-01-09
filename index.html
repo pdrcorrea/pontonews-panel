@@ -398,9 +398,15 @@
   </div>
 
 <script>
-/* ========= CONFIG ========= */
-const WORKER_API = "https://pontoview-api.pedrhc258.workers.dev/api/news";
-
+/* ===== CONFIG ===== */
+const WORKER_API =
+  "https://pontoview-api.pedrhc258.workers.dev/api/news" +
+  "?safe=1" +
+  "&limit=30" +
+  "&maxAgeHours=24" +
+  "&maxPerSource=5" +
+  "&minSources=5" +
+  "&seed=1";
 // Você pediu: “carregar só quando atualizar a página”
 // Então deixo rotação DESLIGADA por padrão (0 = não roda).
 const UI_ROTATE_MS = 0; // ex: 15000 para rodar automaticamente
