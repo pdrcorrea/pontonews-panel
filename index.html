@@ -10,7 +10,6 @@
 
 <style>
   :root{
-    /* ===== PONTO VIEW THEME (igual padrão) ===== */
     --header: linear-gradient(180deg,#2f6f9d 0%,#184c75 55%,#0f3b5e 100%);
     --bg: radial-gradient(1200px 900px at 25% 10%, rgba(87,184,231,.22), rgba(10,46,62,0) 60%),
           radial-gradient(900px 700px at 75% 80%, rgba(52,198,208,.14), rgba(6,18,24,0) 65%),
@@ -24,17 +23,13 @@
     --radius:22px;
     --shadow:0 18px 60px rgba(2,10,23,.18);
 
-    /* Safe padding padrão (igual painéis clima/ônibus) */
     --safe: clamp(14px, 2.2vw, 32px);
 
-    /* Tipos responsivos */
     --t-title: clamp(22px, 2.1vw, 34px);
     --t-sub:   clamp(12px, 1.05vw, 16px);
     --t-clock: clamp(42px, 4.2vw, 78px);
 
     --t-headline: clamp(30px, 4.4vw, 70px);
-
-    /* footer meta */
     --t-foot: clamp(11px, 0.95vw, 13px);
   }
 
@@ -49,7 +44,6 @@
     overflow:hidden;
   }
 
-  /* ===== FULLSCREEN COM SAFE PADDING ===== */
   .frame{
     width:100vw;
     height:100vh;
@@ -68,14 +62,12 @@
     flex-direction:column;
     min-height:0;
 
-    /* ✅ animação suave de entrada (substitui o fade antigo) */
     opacity:0;
     transform: translateY(10px);
     animation: panelIn 700ms cubic-bezier(.22,1,.36,1) forwards;
   }
   @keyframes panelIn{ to{opacity:1; transform:none;} }
 
-  /* ===== HEADER ===== */
   .header{
     padding: clamp(14px, 1.4vw, 22px) clamp(16px, 1.8vw, 26px);
     background:var(--header);
@@ -112,16 +104,6 @@
     overflow:hidden;
     text-overflow:ellipsis;
   }
-  .sub{
-    font-size:var(--t-sub);
-    font-weight:800;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    opacity:.92;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
 
   .h-right{
     text-align:right;
@@ -139,7 +121,6 @@
     font-variant-numeric: tabular-nums;
   }
 
-  /* ===== SUBBAR ===== */
   .subbar{
     background:var(--chip);
     border-bottom:1px solid var(--line);
@@ -194,14 +175,11 @@
     100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
   }
 
-  /* ===== HERO ===== */
   .hero{
     position:relative;
     flex:1 1 auto;
     min-height:0;
     overflow:hidden;
-
-    /* ✅ fundo agradável mesmo sem imagem */
     background:
       radial-gradient(1200px 760px at 35% 25%, rgba(56,189,248,.18), rgba(0,0,0,0) 60%),
       radial-gradient(900px 640px at 75% 80%, rgba(34,197,94,.10), rgba(0,0,0,0) 60%),
@@ -251,8 +229,6 @@
     flex-direction:column;
     gap: 10px;
     max-width: min(1280px, 92vw);
-
-    /* ✅ crossfade */
     opacity:1;
     transform:none;
     transition: opacity 280ms ease, transform 280ms ease;
@@ -270,7 +246,6 @@
     text-shadow: 0 8px 24px rgba(0,0,0,.35);
   }
 
-  /* ===== FOOTER ===== */
   .footer{
     flex:0 0 auto;
     height: clamp(46px, 5.4vh, 72px);
@@ -343,7 +318,6 @@
   <div class="frame">
     <section class="panel">
 
-      <!-- HEADER -->
       <div class="header">
         <div class="h-left">
           <div class="iconBadge" aria-hidden="true">
@@ -358,10 +332,8 @@
         </div>
       </div>
 
-      <!-- SUBBAR -->
       <div class="subbar">
         <div class="subbarLeft" id="subLeft">MANCHETE ATUAL</div>
-
         <div class="subbarRight">
           <div class="pill" id="pillOnline">
             <span class="dot" id="dot"></span>
@@ -370,17 +342,14 @@
         </div>
       </div>
 
-      <!-- HERO -->
       <div class="hero" id="hero">
         <img id="image" alt="Imagem da notícia" />
         <div class="overlay"></div>
-
         <div class="content">
           <div class="headline" id="title">Carregando…</div>
         </div>
       </div>
 
-      <!-- FOOTER -->
       <div class="footer">
         <div class="footerLeft" aria-label="Fonte e data">
           <span class="siteBubble" aria-hidden="true">
@@ -399,38 +368,39 @@
 
 <script>
 /* ===== CONFIG ===== */
-const WORKER_API =
-  "https://pontoview-api.pedrhc258.workers.dev/api/news" +
-  "?safe=1" +
-  "&limit=30" +
-  "&maxAgeHours=48" +
-  "&maxPerSource=5" +
-  "&minSources=5" +
-  "&seed=1";
-// Você pediu: “carregar só quando atualizar a página”
-// Então deixo rotação DESLIGADA por padrão (0 = não roda).
-const UI_ROTATE_MS = 0; // ex: 15000 para rodar automaticamente
-const LIMIT = 60;
-const SAFE = 1;
+// ✅ BASE LIMPA (sem ?params) — evita URL quebrada
+const WORKER_BASE = "https://pontoview-api.pedrhc258.workers.dev/api/news";
 
-// filtro de recência
+// Rotação (0 = não roda)
+const UI_ROTATE_MS = 0;
+
+// Defaults do painel
+const SAFE = 1;
+const LIMIT = 30;
+const TTL_HOURS = 6;
+
+// filtro de recência no HTML (leve)
 const MAX_DAYS = 3;
 
-// Nacionais/gerais que você quer permitir (fora *.es.gov.br)
+// domínios permitidos extras
 const ALLOWED_EXTRA_DOMAINS = [
   "agazeta.com.br",
   "folhavitoria.com.br",
   "simnoticias.com.br",
   "agenciabrasil.ebc.com.br",
   "g1.globo.com",
-  "esfala.com.br"
+  "esfala.com.br",
+  "uol.com.br",
+  "cnnbrasil.com.br",
+  "folha.uol.com.br"
 ];
 
-// bloqueios leves (painel sala de espera)
+// ⚠️ bloqueios leves no HTML: NÃO bloqueie "vídeo" nem "assista" aqui
+// (isso já é função do Worker; no HTML só seguramos violência/tragédia pesada)
 const BLOCK_TERMS = [
-  "assista","ao vivo","video","vídeo","veja","urgente",
   "morre","morte","assassin","homic","tirote","balead",
-  "estupro","tragédia","tragedia","explos","incênd","incend","enchent","desliz"
+  "estupro","tragédia","tragedia","explos","incênd","incend","enchent","desliz",
+  "droga","tráfico","trafico","sequest","cadáver","cadaver","corpo"
 ];
 
 /* ===== CLOCK ===== */
@@ -465,8 +435,6 @@ function host(u){
   try{return new URL(u).hostname.replace("www.","");}catch{return""}
 }
 function isESGov(hostname){
-  // ✅ todas as cidades do ES automaticamente:
-  // vitoria.es.gov.br, colatina.es.gov.br, etc.
   return hostname === "es.gov.br" || hostname.endsWith(".es.gov.br");
 }
 function allowedDomain(url){
@@ -476,7 +444,6 @@ function allowedDomain(url){
   return ALLOWED_EXTRA_DOMAINS.some(d => h === d || h.endsWith("." + d));
 }
 function recentEnough(d){
-  // ✅ se não veio data ou veio inválida: NÃO descarta (senão some tudo)
   if(!d) return true;
   const t = new Date(d).getTime();
   if(Number.isNaN(t)) return true;
@@ -498,7 +465,6 @@ function imgProxy(u){
   if(url.startsWith("//")) url = "https:" + url;
   if(!/^https?:\/\//i.test(url)) return "";
 
-  // ✅ weserv tende a funcionar melhor em TVs/browsers restritos
   return "https://images.weserv.nl/?url="
     + encodeURIComponent(url.replace(/^https?:\/\//i,""))
     + "&w=1600&h=900&fit=cover&output=webp";
@@ -510,12 +476,13 @@ function fmtPub(d){
   return t.toLocaleString("pt-BR");
 }
 
-/* ===== UI: animação suave de entrada ===== */
+/* ===== UI ===== */
 const hero = document.getElementById("hero");
 const titleEl = document.getElementById("title");
 const imgEl = document.getElementById("image");
 const favEl = document.getElementById("favicon");
 const metaEl = document.getElementById("footMeta");
+const subLeft = document.getElementById("subLeft");
 
 function playIn(){
   hero.style.opacity = "0";
@@ -532,11 +499,28 @@ let NEWS = [];
 let idx = 0;
 let timer = null;
 
+function buildApiUrl(){
+  const params = new URLSearchParams({
+    safe: String(SAFE),
+    limit: String(LIMIT),
+    ttlHours: String(TTL_HOURS),
+
+    // ✅ parâmetros do Worker “mix”
+    maxAgeHours: "72",
+    maxPerSource: "5",
+    minSources: "5",
+
+    // ✅ seed/cb para evitar cache agressivo do player
+    seed: "1",
+    _: String(Date.now())
+  });
+  return `${WORKER_BASE}?${params.toString()}`;
+}
+
 async function fetchNews(){
-  // ✅ sempre pega “fresco” (você pediu pra carregar no refresh da página)
-  const url = `${WORKER_API}?safe=${SAFE}&limit=${LIMIT}&ttlHours=6&seed=${Date.now()}`;
+  const url = buildApiUrl();
   const res = await fetch(url, { cache:"no-store" });
-  const j = await res.json();
+  const j = await res.json().catch(()=>null);
   if(!res.ok || !j?.items) throw new Error("Worker sem items");
 
   return j.items.map(it => ({
@@ -555,28 +539,33 @@ function applyFiltersStrong(list){
     .filter(i => !blocked(i));
 }
 
-// fallback leve: só recência (e ainda tolera data inválida)
 function applyFiltersLight(list){
   return (list||[])
-    .filter(i => recentEnough(i.pub))
-    .filter(i => !blocked(i));
+    .filter(i => recentEnough(i.pub));
 }
 
 function renderOne(item){
   titleEl.textContent = item.title;
+  subLeft.textContent = "MANCHETE ATUAL";
 
-  // imagem
+  // ✅ nunca depende de imagem: degradê já existe; apenas liga img se houver
   const prox = imgProxy(item.img);
   if(prox){
     imgEl.src = prox;
     hero.classList.remove("noimg");
+
+    // se a imagem falhar, cai no degradê
+    imgEl.onerror = () => {
+      hero.classList.add("noimg");
+      imgEl.removeAttribute("src");
+      imgEl.onerror = null;
+    };
   }else{
-    // se não tiver imagem, deixa o degradê (noimg já faz o img sumir)
     hero.classList.add("noimg");
     imgEl.removeAttribute("src");
+    imgEl.onerror = null;
   }
 
-  // favicon + meta
   if(item.fav){
     favEl.src = item.fav;
     favEl.style.display = "block";
@@ -600,20 +589,19 @@ async function refresh(){
   try{
     const raw = await fetchNews();
 
-    // tenta filtro forte (ES + nacionais permitidos)
+    // 1) forte (domínio + recência + bloqueio pesado)
     let filtered = applyFiltersStrong(raw);
 
-    // ✅ se zerar, não deixa o painel vazio: usa fallback leve
-    if(!filtered.length) filtered = applyFiltersLight(raw);
+    // 2) se pouco, relaxa domínio (mantém recência)
+    if(filtered.length < 6) filtered = applyFiltersLight(raw);
 
-    // se ainda zerou, usa o bruto (último recurso)
+    // 3) se ainda pouco, usa bruto (último recurso)
     if(!filtered.length) filtered = raw;
 
     NEWS = filtered;
     idx = Math.floor(Math.random() * NEWS.length);
     renderCurrent();
 
-    // rotação opcional
     if(timer) clearInterval(timer);
     if(UI_ROTATE_MS && UI_ROTATE_MS >= 3000){
       timer = setInterval(renderCurrent, UI_ROTATE_MS);
@@ -629,7 +617,6 @@ async function refresh(){
   }
 }
 
-// primeira carga
 refresh();
 </script>
 
