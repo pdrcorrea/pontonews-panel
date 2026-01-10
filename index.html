@@ -522,6 +522,21 @@ async function fetchNews(){
   const url = buildApiUrl();
   const res = await fetch(url, { cache:"no-store" });
   const j = await res.json().catch(()=>null);
+  if (j?.warmingUp) {
+  // mostra placeholders (já vem em items) e tenta novamente
+  NEWS = (j.items || []).map(it => ({
+    title: it.title || "Atualizando…",
+    link: it.link || "",
+    pub: it.pubDate || "",
+    img: it.image || "",
+    fav: favicon(it.link || "")
+  }));
+  idx = 0;
+  renderCurrent();
+
+  setTimeout(refresh, 8000);
+  return;
+}
   if(!res.ok || !j?.items) throw new Error("Worker sem items");
 
   return j.items.map(it => ({
