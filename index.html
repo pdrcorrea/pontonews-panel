@@ -368,22 +368,22 @@
 
 <script>
 /* ===== CONFIG ===== */
-// ✅ BASE LIMPA (sem ?params) — evita URL quebrada
-const WORKER_BASE = "https://pontoview-api.pedrhc258.workers.dev/api/news?profile=br&safe=1&limit=20&ttlHours=6&seed=1
-";
+// ✅ base limpa (sem ?params)
+const WORKER_BASE = "https://pontoview-api.pedrhc258.workers.dev/api/news";
 
 // Rotação (0 = não roda)
 const UI_ROTATE_MS = 0;
 
-// Defaults do painel
+// Defaults do painel (batem com o Worker v10)
+const PROFILE = "br";   // "br" (70% BR / 30% ES) ou "es"
 const SAFE = 1;
-const LIMIT = 30;
+const LIMIT = 20;
 const TTL_HOURS = 6;
+const SEED = "1";
 
 // filtro de recência no HTML (leve)
 const MAX_DAYS = 3;
 
-// domínios permitidos extras
 const ALLOWED_EXTRA_DOMAINS = [
   "agazeta.com.br",
   "folhavitoria.com.br",
@@ -396,8 +396,7 @@ const ALLOWED_EXTRA_DOMAINS = [
   "folha.uol.com.br"
 ];
 
-// ⚠️ bloqueios leves no HTML: NÃO bloqueie "vídeo" nem "assista" aqui
-// (isso já é função do Worker; no HTML só seguramos violência/tragédia pesada)
+// bloqueio pesado (HTML só reforça tragédia/violência)
 const BLOCK_TERMS = [
   "morre","morte","assassin","homic","tirote","balead",
   "estupro","tragédia","tragedia","explos","incênd","incend","enchent","desliz",
@@ -501,19 +500,13 @@ let idx = 0;
 let timer = null;
 
 function buildApiUrl(){
+  // ✅ só params do Worker v10 (fixos para cache pegar)
   const params = new URLSearchParams({
+    profile: PROFILE,
     safe: String(SAFE),
     limit: String(LIMIT),
     ttlHours: String(TTL_HOURS),
-
-    // ✅ parâmetros do Worker “mix”
-    maxAgeHours: "72",
-    maxPerSource: "5",
-    minSources: "5",
-
-    // ✅ seed/cb para evitar cache agressivo do player
-    seed: "1",
-    _: String(Date.now())
+    seed: String(SEED),
   });
   return `${WORKER_BASE}?${params.toString()}`;
 }
@@ -522,21 +515,22 @@ async function fetchNews(){
   const url = buildApiUrl();
   const res = await fetch(url, { cache:"no-store" });
   const j = await res.json().catch(()=>null);
-  if (j?.warmingUp) {
-  // mostra placeholders (já vem em items) e tenta novamente
-  NEWS = (j.items || []).map(it => ({
-    title: it.title || "Atualizando…",
-    link: it.link || "",
-    pub: it.pubDate || "",
-    img: it.image || "",
-    fav: favicon(it.link || "")
-  }));
-  idx = 0;
-  renderCurrent();
 
-  setTimeout(refresh, 8000);
-  return;
-}
+  if (j?.warmingUp) {
+    // mostra placeholders e tenta novamente
+    NEWS = (j.items || []).map(it => ({
+      title: it.title || "Atualizando…",
+      link: it.link || "",
+      pub: it.pubDate || "",
+      img: it.image || "",
+      fav: favicon(it.link || "")
+    }));
+    idx = 0;
+    renderCurrent();
+    setTimeout(refresh, 8000);
+    return null;
+  }
+
   if(!res.ok || !j?.items) throw new Error("Worker sem items");
 
   return j.items.map(it => ({
@@ -564,13 +558,11 @@ function renderOne(item){
   titleEl.textContent = item.title;
   subLeft.textContent = "MANCHETE ATUAL";
 
-  // ✅ nunca depende de imagem: degradê já existe; apenas liga img se houver
   const prox = imgProxy(item.img);
   if(prox){
     imgEl.src = prox;
     hero.classList.remove("noimg");
 
-    // se a imagem falhar, cai no degradê
     imgEl.onerror = () => {
       hero.classList.add("noimg");
       imgEl.removeAttribute("src");
@@ -604,14 +596,10 @@ function renderCurrent(){
 async function refresh(){
   try{
     const raw = await fetchNews();
+    if(!raw) return; // warmingUp já agendou retry
 
-    // 1) forte (domínio + recência + bloqueio pesado)
     let filtered = applyFiltersStrong(raw);
-
-    // 2) se pouco, relaxa domínio (mantém recência)
     if(filtered.length < 6) filtered = applyFiltersLight(raw);
-
-    // 3) se ainda pouco, usa bruto (último recurso)
     if(!filtered.length) filtered = raw;
 
     NEWS = filtered;
