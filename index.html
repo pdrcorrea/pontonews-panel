@@ -17,18 +17,15 @@
     --card:#ffffff;
     --line:#e6edf7;
     --chip:#f3f7ff;
-    --muted:#6b7788;
     --ink:#0e1b2a;
 
     --radius:22px;
     --shadow:0 18px 60px rgba(2,10,23,.18);
-
     --safe: clamp(14px, 2.2vw, 32px);
 
     --t-title: clamp(22px, 2.1vw, 34px);
     --t-sub:   clamp(12px, 1.05vw, 16px);
     --t-clock: clamp(42px, 4.2vw, 78px);
-
     --t-headline: clamp(30px, 4.4vw, 70px);
     --t-foot: clamp(11px, 0.95vw, 13px);
   }
@@ -44,49 +41,33 @@
     overflow:hidden;
   }
 
-  .frame{
-    width:100vw;
-    height:100vh;
-    padding:var(--safe);
-    display:flex;
-  }
-
+  .frame{width:100vw;height:100vh;padding:var(--safe);display:flex}
   .panel{
-    width:100%;
-    height:100%;
+    width:100%;height:100%;
     background:var(--card);
     border-radius:var(--radius);
     overflow:hidden;
     box-shadow:var(--shadow);
-    display:flex;
-    flex-direction:column;
-    min-height:0;
-
-    opacity:0;
-    transform: translateY(10px);
+    display:flex;flex-direction:column;min-height:0;
+    opacity:0;transform:translateY(10px);
     animation: panelIn 700ms cubic-bezier(.22,1,.36,1) forwards;
   }
-  @keyframes panelIn{ to{opacity:1; transform:none;} }
+  @keyframes panelIn{to{opacity:1;transform:none}}
 
   .header{
     padding: clamp(14px, 1.4vw, 22px) clamp(16px, 1.8vw, 26px);
     background:var(--header);
     color:#fff;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:16px;
+    display:flex;justify-content:space-between;align-items:center;gap:16px;
     border-bottom:1px solid rgba(255,255,255,.12);
     min-width:0;
   }
-
   .h-left{display:flex;gap:14px;align-items:center;min-width:0}
   .iconBadge{
     width:clamp(44px, 3.2vw, 62px);
     height:clamp(44px, 3.2vw, 62px);
     border-radius:16px;
-    display:grid;
-    place-items:center;
+    display:grid;place-items:center;
     background:rgba(255,255,255,.10);
     border:1px solid rgba(255,255,255,.22);
     box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
@@ -94,30 +75,19 @@
   }
   .iconBadge .material-icons-outlined{font-size:clamp(22px, 2vw, 30px); opacity:.95}
 
-  .titles{display:flex;flex-direction:column;gap:6px;min-width:0}
   .title{
     font-size:var(--t-title);
     font-weight:900;
     letter-spacing:.06em;
     text-transform:uppercase;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
 
-  .h-right{
-    text-align:right;
-    display:flex;
-    flex-direction:column;
-    gap:10px;
-    align-items:flex-end;
-    min-width:max-content;
-  }
+  .h-right{display:flex;flex-direction:column;align-items:flex-end}
   .clock{
     font-size:var(--t-clock);
     font-weight:900;
     line-height:1;
-    letter-spacing:.02em;
     font-variant-numeric: tabular-nums;
   }
 
@@ -125,11 +95,7 @@
     background:var(--chip);
     border-bottom:1px solid var(--line);
     padding: 10px clamp(16px, 1.8vw, 26px);
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    gap:12px;
-    min-width:0;
+    display:flex;justify-content:space-between;align-items:center;gap:12px;
   }
   .subbarLeft{
     font-size:var(--t-sub);
@@ -137,326 +103,151 @@
     letter-spacing:.14em;
     text-transform:uppercase;
     color:#1c2c41;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
-  .subbarRight{
-    display:flex;
-    gap:10px;
-    align-items:center;
-    justify-content:flex-end;
-    min-width:0;
-    white-space:nowrap;
-  }
-
   .pill{
-    display:inline-flex;
-    align-items:center;
-    gap:10px;
-    padding:8px 12px;
-    border-radius:999px;
+    display:inline-flex;align-items:center;gap:10px;
+    padding:8px 12px;border-radius:999px;
     background:rgba(255,255,255,.78);
     border:1px solid rgba(15,23,42,.08);
     color:#0f172a;
     font-weight:900;
     font-size:clamp(12px, 1.05vw, 16px);
   }
-  .dot{
-    width:10px;height:10px;border-radius:50%;
-    background:#22c55e;
-    box-shadow:0 0 0 0 rgba(34,197,94,.55);
-    animation:pulse 1.6s infinite;
-  }
-  .dot.off{background:#ef4444; animation:none; box-shadow:none;}
-  @keyframes pulse{
-    0%{box-shadow:0 0 0 0 rgba(34,197,94,.50)}
-    70%{box-shadow:0 0 0 10px rgba(34,197,94,0)}
-    100%{box-shadow:0 0 0 0 rgba(34,197,94,0)}
-  }
+  .dot{width:10px;height:10px;border-radius:50%;background:#22c55e}
+  .dot.off{background:#ef4444}
 
   .hero{
-    position:relative;
-    flex:1 1 auto;
-    min-height:0;
-    overflow:hidden;
+    position:relative;flex:1 1 auto;min-height:0;overflow:hidden;
     background:
       radial-gradient(1200px 760px at 35% 25%, rgba(56,189,248,.18), rgba(0,0,0,0) 60%),
       radial-gradient(900px 640px at 75% 80%, rgba(34,197,94,.10), rgba(0,0,0,0) 60%),
       linear-gradient(180deg, #0b1220 0%, #0a1b2e 45%, #0b1020 100%);
   }
-
-  .hero::before{
-    content:"";
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-    background:
-      radial-gradient(2px 2px at 20% 30%, rgba(255,255,255,.16) 0 50%, transparent 55%),
-      radial-gradient(2px 2px at 65% 20%, rgba(255,255,255,.12) 0 50%, transparent 55%),
-      radial-gradient(2px 2px at 80% 70%, rgba(255,255,255,.10) 0 50%, transparent 55%),
-      radial-gradient(2px 2px at 35% 75%, rgba(255,255,255,.10) 0 50%, transparent 55%);
-    opacity:.35;
-  }
-
   .hero img{
-    position:absolute;
-    inset:0;
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    filter:saturate(1.02) contrast(1.03);
-    transform:scale(1.01);
-    opacity:.78;
-    transition: opacity 220ms ease;
+    position:absolute;inset:0;width:100%;height:100%;
+    object-fit:cover;opacity:.78;transition:opacity 220ms ease;
   }
-  .hero.noimg img{ opacity:0; }
-
+  .hero.noimg img{opacity:0}
   .overlay{
-    position:absolute;
-    inset:0;
+    position:absolute;inset:0;
     background:
       linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,.55) 58%, rgba(0,0,0,.78) 100%),
       radial-gradient(900px 520px at 30% 75%, rgba(0,0,0,.35), rgba(0,0,0,0) 65%);
   }
-
   .content{
-    position:absolute;
-    inset:auto clamp(16px, 1.8vw, 26px) clamp(16px, 1.8vw, 22px);
-    bottom: clamp(18px, 2.0vw, 26px);
-    color:#fff;
-    display:flex;
-    flex-direction:column;
-    gap: 10px;
-    max-width: min(1280px, 92vw);
-    opacity:1;
-    transform:none;
+    position:absolute;left:clamp(16px, 1.8vw, 26px);
+    right:clamp(16px, 1.8vw, 26px);
+    bottom:clamp(18px, 2.0vw, 26px);
+    color:#fff;display:flex;flex-direction:column;gap:10px;
+    max-width:min(1280px, 92vw);
     transition: opacity 280ms ease, transform 280ms ease;
   }
-  .content.fadeOut{
-    opacity:0;
-    transform: translateY(6px);
-  }
-
   .headline{
     font-size:var(--t-headline);
     font-weight:900;
     line-height:1.05;
-    letter-spacing:-.01em;
-    text-shadow: 0 8px 24px rgba(0,0,0,.35);
+    text-shadow:0 8px 24px rgba(0,0,0,.35);
   }
 
   .footer{
-    flex:0 0 auto;
     height: clamp(46px, 5.4vh, 72px);
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding: 10px clamp(16px, 1.8vw, 26px);
+    display:flex;align-items:center;justify-content:space-between;
+    padding:10px clamp(16px, 1.8vw, 26px);
     border-top:1px solid var(--line);
-    background: transparent;
-    gap: 14px;
-    min-width:0;
+    gap:14px;
   }
-
-  .footerLeft{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    min-width:0;
-    overflow:hidden;
-  }
-
+  .footerLeft{display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden}
   .siteBubble{
-    width:26px;
-    height:26px;
-    border-radius:999px;
-    background: rgba(255,255,255,.90);
+    width:26px;height:26px;border-radius:999px;
+    background:rgba(255,255,255,.90);
     border:1px solid rgba(15,23,42,.10);
-    display:grid;
-    place-items:center;
-    overflow:hidden;
-    flex:0 0 auto;
-    box-shadow: 0 8px 18px rgba(0,0,0,.06);
+    display:grid;place-items:center;overflow:hidden;flex:0 0 auto;
   }
-  .siteBubble img{
-    width:16px;height:16px;object-fit:contain;display:block;
-  }
-
+  .siteBubble img{width:16px;height:16px;object-fit:contain;display:block}
   .footMeta{
     font-size:var(--t-foot);
     font-weight:900;
     letter-spacing:.10em;
     text-transform:uppercase;
     color:#31445f;
-    opacity:.92;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
+    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   }
-
-  .footerRight{
-    display:flex;
-    align-items:center;
-    justify-content:flex-end;
-    flex:0 0 auto;
-  }
-  .footerRight img{
-    height: clamp(16px, 2.4vh, 22px);
-    opacity:.80;
-    display:block;
-  }
-
-  @media (max-aspect-ratio: 10/16){
-    .content{max-width: 92vw;}
-    .headline{letter-spacing:-.02em;}
-  }
+  .footerRight img{height:clamp(16px, 2.4vh, 22px);opacity:.8}
 </style>
 </head>
 
 <body>
-  <div class="frame">
-    <section class="panel">
-
-      <div class="header">
-        <div class="h-left">
-          <div class="iconBadge" aria-hidden="true">
-            <span class="material-icons-outlined">newspaper</span>
-          </div>
-          <div class="titles">
-            <div class="title">NOTÍCIAS</div>
-          </div>
-        </div>
-        <div class="h-right">
-          <div class="clock" id="clock">--:--</div>
-        </div>
+<div class="frame">
+  <section class="panel">
+    <div class="header">
+      <div class="h-left">
+        <div class="iconBadge"><span class="material-icons-outlined">newspaper</span></div>
+        <div class="title">NOTÍCIAS</div>
       </div>
+      <div class="h-right"><div class="clock" id="clock">--:--</div></div>
+    </div>
 
-      <div class="subbar">
-        <div class="subbarLeft" id="subLeft">MANCHETE ATUAL</div>
-        <div class="subbarRight">
-          <div class="pill" id="pillOnline">
-            <span class="dot" id="dot"></span>
-            <span id="statusText">Online</span>
-          </div>
-        </div>
+    <div class="subbar">
+      <div class="subbarLeft" id="subLeft">MANCHETE ATUAL</div>
+      <div class="pill"><span class="dot" id="dot"></span><span id="statusText">Online</span></div>
+    </div>
+
+    <div class="hero noimg" id="hero">
+      <img id="image" alt="Imagem da notícia" />
+      <div class="overlay"></div>
+      <div class="content">
+        <div class="headline" id="title">Carregando…</div>
       </div>
+    </div>
 
-      <div class="hero" id="hero">
-        <img id="image" alt="Imagem da notícia" />
-        <div class="overlay"></div>
-        <div class="content">
-          <div class="headline" id="title">Carregando…</div>
-        </div>
+    <div class="footer">
+      <div class="footerLeft">
+        <span class="siteBubble"><img id="favicon" alt="" /></span>
+        <div class="footMeta" id="footMeta">FONTE • —</div>
       </div>
-
-      <div class="footer">
-        <div class="footerLeft" aria-label="Fonte e data">
-          <span class="siteBubble" aria-hidden="true">
-            <img id="favicon" alt="" />
-          </span>
-          <div class="footMeta" id="footMeta">FONTE • — • —</div>
-        </div>
-
-        <div class="footerRight">
-          <img src="./assets/logo-pontoview.png" alt="PontoView"/>
-        </div>
+      <div class="footerRight">
+        <img src="./assets/logo-pontoview.png" alt="PontoView"/>
       </div>
-
-    </section>
-  </div>
+    </div>
+  </section>
+</div>
 
 <script>
-/* ===== CONFIG ===== */
-// ✅ base limpa (sem ?params)
+/* ===== CONFIG (compatível com pv-news-v6) ===== */
 const WORKER_BASE = "https://pontoview-api.pedrhc258.workers.dev/api/news";
 
-// Rotação (0 = não roda)
-const UI_ROTATE_MS = 0;
-
-// Defaults do painel (batem com o Worker v10)
-const PROFILE = "br";   // "br" (70% BR / 30% ES) ou "es"
-const SAFE = 1;
-const LIMIT = 20;
+const SAFE = 1;            // 1 = sala de espera (leve)
+const LIMIT = 20;          // igual ao worker default
 const TTL_HOURS = 6;
-const SEED = "1";
+const MAX_AGE_HOURS = 72;
+const MAX_PER_SOURCE = 5;
 
-// filtro de recência no HTML (leve)
-const MAX_DAYS = 3;
-
-const ALLOWED_EXTRA_DOMAINS = [
-  "agazeta.com.br",
-  "folhavitoria.com.br",
-  "simnoticias.com.br",
-  "agenciabrasil.ebc.com.br",
-  "g1.globo.com",
-  "esfala.com.br",
-  "uol.com.br",
-  "cnnbrasil.com.br",
-  "folha.uol.com.br"
-];
-
-// bloqueio pesado (HTML só reforça tragédia/violência)
-const BLOCK_TERMS = [
-  "morre","morte","assassin","homic","tirote","balead",
-  "estupro","tragédia","tragedia","explos","incênd","incend","enchent","desliz",
-  "droga","tráfico","trafico","sequest","cadáver","cadaver","corpo"
-];
+const UI_ROTATE_MS = 15000; // coloque 0 se não quiser rodar
 
 /* ===== CLOCK ===== */
 const clock = document.getElementById("clock");
 function tickClock(){
   clock.textContent = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
 }
-tickClock();
-setInterval(tickClock, 1000);
+tickClock(); setInterval(tickClock, 1000);
 
-/* ===== ONLINE / OFFLINE ===== */
+/* ===== ONLINE ===== */
 const statusText = document.getElementById("statusText");
 const dot = document.getElementById("dot");
 function updateStatus(){
-  if(navigator.onLine){
-    statusText.textContent="Online";
-    dot.classList.remove("off");
-  }else{
-    statusText.textContent="Offline";
-    dot.classList.add("off");
-  }
+  if(navigator.onLine){ statusText.textContent="Online"; dot.classList.remove("off"); }
+  else{ statusText.textContent="Offline"; dot.classList.add("off"); }
 }
 updateStatus();
-window.addEventListener("online",updateStatus);
-window.addEventListener("offline",updateStatus);
+addEventListener("online", updateStatus);
+addEventListener("offline", updateStatus);
 
 /* ===== HELPERS ===== */
-function norm(s){
-  return (s||"").toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g,"");
-}
-function host(u){
-  try{return new URL(u).hostname.replace("www.","");}catch{return""}
-}
-function isESGov(hostname){
-  return hostname === "es.gov.br" || hostname.endsWith(".es.gov.br");
-}
-function allowedDomain(url){
-  const h = host(url);
-  if(!h) return false;
-  if(isESGov(h)) return true;
-  return ALLOWED_EXTRA_DOMAINS.some(d => h === d || h.endsWith("." + d));
-}
-function recentEnough(d){
-  if(!d) return true;
-  const t = new Date(d).getTime();
-  if(Number.isNaN(t)) return true;
-  return (Date.now() - t) <= MAX_DAYS * 86400000;
-}
-function blocked(it){
-  const hay = norm((it.title||"") + " " + (it.link||""));
-  return BLOCK_TERMS.some(w=>hay.includes(norm(w)));
-}
-function favicon(url){
-  try{
-    return "https://www.google.com/s2/favicons?domain=" + new URL(url).hostname + "&sz=64";
-  }catch{return""}
+function host(u){ try{return new URL(u).hostname.replace(/^www\./,"");}catch{return""} }
+function favicon(u){
+  try{ return "https://www.google.com/s2/favicons?domain=" + new URL(u).hostname + "&sz=64"; }
+  catch{ return ""; }
 }
 function imgProxy(u){
   if(!u) return "";
@@ -464,9 +255,7 @@ function imgProxy(u){
   if(!url) return "";
   if(url.startsWith("//")) url = "https:" + url;
   if(!/^https?:\/\//i.test(url)) return "";
-
-  return "https://images.weserv.nl/?url="
-    + encodeURIComponent(url.replace(/^https?:\/\//i,""))
+  return "https://images.weserv.nl/?url=" + encodeURIComponent(url.replace(/^https?:\/\//i,""))
     + "&w=1600&h=900&fit=cover&output=webp";
 }
 function fmtPub(d){
@@ -476,7 +265,20 @@ function fmtPub(d){
   return t.toLocaleString("pt-BR");
 }
 
-/* ===== UI ===== */
+function buildApiUrl(){
+  const params = new URLSearchParams({
+    safe: String(SAFE),
+    limit: String(LIMIT),
+    ttlHours: String(TTL_HOURS),
+    maxAgeHours: String(MAX_AGE_HOURS),
+    maxPerSource: String(MAX_PER_SOURCE),
+    seed: "1",
+    _: String(Date.now()) // cache-buster
+  });
+  return `${WORKER_BASE}?${params.toString()}`;
+}
+
+/* ===== UI refs ===== */
 const hero = document.getElementById("hero");
 const titleEl = document.getElementById("title");
 const imgEl = document.getElementById("image");
@@ -484,85 +286,19 @@ const favEl = document.getElementById("favicon");
 const metaEl = document.getElementById("footMeta");
 const subLeft = document.getElementById("subLeft");
 
-function playIn(){
-  hero.style.opacity = "0";
-  hero.style.transform = "translateY(10px)";
-  hero.style.transition = "opacity 420ms ease, transform 420ms ease";
-  requestAnimationFrame(()=>{
-    hero.style.opacity = "1";
-    hero.style.transform = "translateY(0)";
-  });
-}
-
 /* ===== DATA ===== */
 let NEWS = [];
 let idx = 0;
 let timer = null;
 
-function buildApiUrl(){
-  // ✅ só params do Worker v10 (fixos para cache pegar)
-  const params = new URLSearchParams({
-    profile: PROFILE,
-    safe: String(SAFE),
-    limit: String(LIMIT),
-    ttlHours: String(TTL_HOURS),
-    seed: String(SEED),
-  });
-  return `${WORKER_BASE}?${params.toString()}`;
-}
-
-async function fetchNews(){
-  const url = buildApiUrl();
-  const res = await fetch(url, { cache:"no-store" });
-  const j = await res.json().catch(()=>null);
-
-  if (j?.warmingUp) {
-    // mostra placeholders e tenta novamente
-    NEWS = (j.items || []).map(it => ({
-      title: it.title || "Atualizando…",
-      link: it.link || "",
-      pub: it.pubDate || "",
-      img: it.image || "",
-      fav: favicon(it.link || "")
-    }));
-    idx = 0;
-    renderCurrent();
-    setTimeout(refresh, 8000);
-    return null;
-  }
-
-  if(!res.ok || !j?.items) throw new Error("Worker sem items");
-
-  return j.items.map(it => ({
-    title: (it.title || "").trim() || "Notícia",
-    link: it.link || "",
-    pub: it.pubDate || it.publishedAt || "",
-    img: it.image || "",
-    fav: favicon(it.link || "")
-  }));
-}
-
-function applyFiltersStrong(list){
-  return (list||[])
-    .filter(i => allowedDomain(i.link))
-    .filter(i => recentEnough(i.pub))
-    .filter(i => !blocked(i));
-}
-
-function applyFiltersLight(list){
-  return (list||[])
-    .filter(i => recentEnough(i.pub));
-}
-
-function renderOne(item){
-  titleEl.textContent = item.title;
+function renderOne(it){
+  titleEl.textContent = it.title || "Notícia";
   subLeft.textContent = "MANCHETE ATUAL";
 
-  const prox = imgProxy(item.img);
+  const prox = imgProxy(it.image);
   if(prox){
     imgEl.src = prox;
     hero.classList.remove("noimg");
-
     imgEl.onerror = () => {
       hero.classList.add("noimg");
       imgEl.removeAttribute("src");
@@ -574,35 +310,38 @@ function renderOne(item){
     imgEl.onerror = null;
   }
 
-  if(item.fav){
-    favEl.src = item.fav;
-    favEl.style.display = "block";
-  }else{
-    favEl.style.display = "none";
-  }
+  const fav = favicon(it.link);
+  if(fav){ favEl.src = fav; favEl.style.display="block"; }
+  else { favEl.style.display="none"; }
 
-  metaEl.textContent = `${host(item.link).toUpperCase() || "PONTOVIEW"} • ${fmtPub(item.pub)}`;
-
-  playIn();
+  metaEl.textContent = `${host(it.link).toUpperCase() || "PONTOVIEW"} • ${fmtPub(it.pubDate)}`;
 }
 
 function renderCurrent(){
   if(!NEWS.length) return;
-  const item = NEWS[idx % NEWS.length];
+  const it = NEWS[idx % NEWS.length];
   idx++;
-  renderOne(item);
+  renderOne(it);
 }
 
 async function refresh(){
   try{
-    const raw = await fetchNews();
-    if(!raw) return; // warmingUp já agendou retry
+    const url = buildApiUrl();
+    const res = await fetch(url, { cache:"no-store" });
+    const j = await res.json();
 
-    let filtered = applyFiltersStrong(raw);
-    if(filtered.length < 6) filtered = applyFiltersLight(raw);
-    if(!filtered.length) filtered = raw;
+    if(j?.warmingUp){
+      // mostra placeholder, tenta de novo em alguns segundos
+      NEWS = (j.items || []);
+      idx = 0;
+      renderCurrent();
+      setTimeout(refresh, 7000);
+      return;
+    }
 
-    NEWS = filtered;
+    NEWS = (j.items || []).filter(x => x && x.title);
+    if(!NEWS.length) throw new Error("Sem items");
+
     idx = Math.floor(Math.random() * NEWS.length);
     renderCurrent();
 
@@ -617,7 +356,7 @@ async function refresh(){
     favEl.style.display = "none";
     hero.classList.add("noimg");
     imgEl.removeAttribute("src");
-    playIn();
+    setTimeout(refresh, 8000);
   }
 }
 
