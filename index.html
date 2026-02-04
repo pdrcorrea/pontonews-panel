@@ -5,248 +5,306 @@
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>PontoView • Notícias</title>
 
-<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
 
 <style>
-  :root{
-    --header: linear-gradient(180deg,#2f6f9d 0%,#184c75 55%,#0f3b5e 100%);
-    --bg: radial-gradient(1200px 900px at 25% 10%, rgba(87,184,231,.22), rgba(10,46,62,0) 60%),
-          radial-gradient(900px 700px at 75% 80%, rgba(52,198,208,.14), rgba(6,18,24,0) 65%),
-          radial-gradient(1400px 1100px at 50% 55%, #0a2232 0%, #081423 62%, #040a0f 100%);
-    --card:#ffffff;
-    --line:#e6edf7;
-    --chip:#f3f7ff;
-    --ink:#0e1b2a;
+:root{
+  --blue1:#3a78a7;
+  --blue2:#0f3b5e;
 
-    --radius:22px;
-    --shadow:0 18px 60px rgba(2,10,23,.18);
-    --safe: clamp(14px, 2.2vw, 32px);
+  --bg:#ffffff;
+  --ink:#0b1320;
+  --muted:rgba(11,19,32,.55);
+  --line:rgba(11,19,32,.10);
 
-    --t-title: clamp(22px, 2.1vw, 34px);
-    --t-sub:   clamp(12px, 1.05vw, 16px);
-    --t-clock: clamp(42px, 4.2vw, 78px);
-    --t-headline: clamp(30px, 4.4vw, 70px);
-    --t-foot: clamp(11px, 0.95vw, 13px);
-  }
+  --safe:clamp(16px,2.4vw,36px);
 
-  *{box-sizing:border-box}
-  html,body{height:100%}
+  /* Cabeçalho maior */
+  --barH:clamp(76px,9vh,104px);
 
-  body{
-    margin:0;
-    font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-    background:var(--bg);
-    color:var(--ink);
-    overflow:hidden;
-  }
+  /* Manchete equilibrada para TV */
+  --t-title:clamp(26px,3.3vw,54px);
+  --t-desc:clamp(15px,1.55vw,22px);
+  --t-chip:clamp(12px,1.05vw,16px);
 
-  .frame{width:100vw;height:100vh;padding:var(--safe);display:flex}
-  .panel{
-    width:100%;height:100%;
-    background:var(--card);
-    border-radius:var(--radius);
-    overflow:hidden;
-    box-shadow:var(--shadow);
-    display:flex;flex-direction:column;min-height:0;
-    opacity:0;transform:translateY(10px);
-    animation: panelIn 700ms cubic-bezier(.22,1,.36,1) forwards;
-  }
-  @keyframes panelIn{to{opacity:1;transform:none}}
+  --radius:clamp(18px,2.4vw,32px);
+}
 
-  .header{
-    padding: clamp(14px, 1.4vw, 22px) clamp(16px, 1.8vw, 26px);
-    background:var(--header);
-    color:#fff;
-    display:flex;justify-content:space-between;align-items:center;gap:16px;
-    border-bottom:1px solid rgba(255,255,255,.12);
-    min-width:0;
-  }
-  .h-left{display:flex;gap:14px;align-items:center;min-width:0}
-  .iconBadge{
-    width:clamp(44px, 3.2vw, 62px);
-    height:clamp(44px, 3.2vw, 62px);
-    border-radius:16px;
-    display:grid;place-items:center;
-    background:rgba(255,255,255,.10);
-    border:1px solid rgba(255,255,255,.22);
-    box-shadow: inset 0 1px 0 rgba(255,255,255,.18);
-    flex:0 0 auto;
-  }
-  .iconBadge .material-icons-outlined{font-size:clamp(22px, 2vw, 30px); opacity:.95}
+*{box-sizing:border-box}
+html,body{height:100%}
 
-  .title{
-    font-size:var(--t-title);
-    font-weight:900;
-    letter-spacing:.06em;
-    text-transform:uppercase;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  }
+body{
+  margin:0;
+  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
+  background:var(--bg);
+  color:var(--ink);
+  overflow:hidden;
+}
 
-  .h-right{display:flex;flex-direction:column;align-items:flex-end}
-  .clock{
-    font-size:var(--t-clock);
-    font-weight:900;
-    line-height:1;
-    font-variant-numeric: tabular-nums;
-  }
+.screen{
+  width:100vw;
+  height:100vh;
+  display:flex;
+  flex-direction:column;
+}
 
-  .subbar{
-    background:var(--chip);
-    border-bottom:1px solid var(--line);
-    padding: 10px clamp(16px, 1.8vw, 26px);
-    display:flex;justify-content:space-between;align-items:center;gap:12px;
-  }
-  .subbarLeft{
-    font-size:var(--t-sub);
-    font-weight:900;
-    letter-spacing:.14em;
-    text-transform:uppercase;
-    color:#1c2c41;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  }
-  .pill{
-    display:inline-flex;align-items:center;gap:10px;
-    padding:8px 12px;border-radius:999px;
-    background:rgba(255,255,255,.78);
-    border:1px solid rgba(15,23,42,.08);
-    color:#0f172a;
-    font-weight:900;
-    font-size:clamp(12px, 1.05vw, 16px);
-  }
-  .dot{width:10px;height:10px;border-radius:50%;background:#22c55e}
-  .dot.off{background:#ef4444}
+/* ================= CABEÇALHO ================= */
+.topbar{
+  height:var(--barH);
+  padding:0 var(--safe);
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:20px;
+  background:linear-gradient(180deg,var(--blue1),var(--blue2));
+  color:#fff;
+  border-bottom:1px solid rgba(255,255,255,.18);
+}
 
-  .hero{
-    position:relative;flex:1 1 auto;min-height:0;overflow:hidden;
-    background:
-      radial-gradient(1200px 760px at 35% 25%, rgba(56,189,248,.18), rgba(0,0,0,0) 60%),
-      radial-gradient(900px 640px at 75% 80%, rgba(34,197,94,.10), rgba(0,0,0,0) 60%),
-      linear-gradient(180deg, #0b1220 0%, #0a1b2e 45%, #0b1020 100%);
-  }
-  .hero img{
-    position:absolute;inset:0;width:100%;height:100%;
-    object-fit:cover;opacity:.78;transition:opacity 220ms ease;
-  }
-  .hero.noimg img{opacity:0}
-  .overlay{
-    position:absolute;inset:0;
-    background:
-      linear-gradient(180deg, rgba(0,0,0,.10) 0%, rgba(0,0,0,.55) 58%, rgba(0,0,0,.78) 100%),
-      radial-gradient(900px 520px at 30% 75%, rgba(0,0,0,.35), rgba(0,0,0,0) 65%);
-  }
-  .content{
-    position:absolute;left:clamp(16px, 1.8vw, 26px);
-    right:clamp(16px, 1.8vw, 26px);
-    bottom:clamp(18px, 2.0vw, 26px);
-    color:#fff;display:flex;flex-direction:column;gap:10px;
-    max-width:min(1280px, 92vw);
-    transition: opacity 280ms ease, transform 280ms ease;
-  }
-  .headline{
-    font-size:var(--t-headline);
-    font-weight:900;
-    line-height:1.05;
-    text-shadow:0 8px 24px rgba(0,0,0,.35);
-  }
+.brand{
+  display:flex;
+  align-items:center;
+  gap:14px;
+  min-width:0;
+}
 
-  .footer{
-    height: clamp(46px, 5.4vh, 72px);
-    display:flex;align-items:center;justify-content:space-between;
-    padding:10px clamp(16px, 1.8vw, 26px);
-    border-top:1px solid var(--line);
-    gap:14px;
+.brandIcon{
+  width:clamp(46px,5.8vh,64px);
+  height:clamp(46px,5.8vh,64px);
+  border-radius:14px;
+  display:grid;
+  place-items:center;
+  background:rgba(255,255,255,.12);
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
+  flex:0 0 auto;
+}
+
+.brandIcon span{
+  font-size:clamp(22px,2.4vh,30px);
+}
+
+.brandTitle{
+  font-weight:900;
+  letter-spacing:.14em;
+  text-transform:uppercase;
+  font-size:clamp(18px,2.2vw,30px);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+.sourceChip{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  padding:10px 16px;
+  border-radius:999px;
+  background:rgba(255,255,255,.18);
+  border:1px solid rgba(255,255,255,.22);
+  max-width:50vw;
+  min-width:180px;
+}
+
+.sourceDot{
+  width:22px;
+  height:22px;
+  border-radius:999px;
+  background:#fff;
+  display:grid;
+  place-items:center;
+  overflow:hidden;
+  flex:0 0 auto;
+}
+
+.sourceDot img{
+  width:16px;
+  height:16px;
+  object-fit:contain;
+  display:block;
+}
+
+.sourceText{
+  font-weight:900;
+  letter-spacing:.08em;
+  text-transform:uppercase;
+  font-size:var(--t-chip);
+  white-space:nowrap;
+  overflow:hidden;
+  text-overflow:ellipsis;
+}
+
+/* ================= CONTEÚDO ================= */
+.stage{
+  flex:1;
+  padding:var(--safe);
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  gap:clamp(20px,3vw,48px);
+  align-items:center;
+  min-height:0;
+}
+
+.left{
+  min-width:0;
+}
+
+.headline{
+  font-size:var(--t-title);
+  font-weight:900;
+  line-height:1.10;
+  margin:0 0 18px 0;
+
+  /* limite de linhas p/ não explodir layout */
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:3; /* máx 3 linhas */
+  overflow:hidden;
+}
+
+.desc{
+  font-size:var(--t-desc);
+  line-height:1.5;
+  color:var(--muted);
+  max-width:60ch;
+  margin:0;
+
+  /* limite padrão de linhas */
+  display:-webkit-box;
+  -webkit-box-orient:vertical;
+  -webkit-line-clamp:6;
+  overflow:hidden;
+}
+
+/* Quando o texto é longo => prioriza manchete + imagem */
+.desc.is-collapsed{
+  display:none !important;
+}
+
+/* ================= IMAGEM (RSS) ================= */
+.right{
+  position:relative;
+  border-radius:var(--radius);
+  overflow:hidden;
+  background:linear-gradient(180deg,var(--blue1),var(--blue2));
+  min-height:clamp(240px,44vh,620px);
+  box-shadow:0 22px 70px rgba(2,10,23,.16);
+}
+
+.right img{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  object-fit:cover;
+  opacity:1;
+}
+
+.right::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.18));
+}
+
+.right.noimg img{display:none}
+.right.noimg::after{
+  background:
+    radial-gradient(800px 500px at 30% 30%,rgba(255,255,255,.20),transparent 60%),
+    linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.22));
+}
+
+/* ================= RODAPÉ ================= */
+.footer{
+  padding:10px var(--safe);
+  border-top:1px solid var(--line);
+  display:flex;
+  justify-content:flex-end;
+  align-items:center;
+}
+
+.footer img{
+  height:clamp(16px,2.4vh,22px);
+  opacity:.55;
+}
+
+/* ================= RESPONSIVO VERTICAL ================= */
+@media (orientation:portrait){
+  .stage{
+    grid-template-columns:1fr;
+    grid-template-rows:auto 1fr;
+    align-items:stretch;
   }
-  .footerLeft{display:flex;align-items:center;gap:10px;min-width:0;overflow:hidden}
-  .siteBubble{
-    width:26px;height:26px;border-radius:999px;
-    background:rgba(255,255,255,.90);
-    border:1px solid rgba(15,23,42,.10);
-    display:grid;place-items:center;overflow:hidden;flex:0 0 auto;
+  .right{
+    min-height:clamp(220px,36vh,520px);
   }
-  .siteBubble img{width:16px;height:16px;object-fit:contain;display:block}
-  .footMeta{
-    font-size:var(--t-foot);
-    font-weight:900;
-    letter-spacing:.10em;
-    text-transform:uppercase;
-    color:#31445f;
-    white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  }
-  .footerRight img{height:clamp(16px, 2.4vh, 22px);opacity:.8}
+  .sourceChip{ max-width:60vw; }
+}
+
+/* ================= TRANSIÇÃO ================= */
+.fade{
+  transition:opacity .45s ease, transform .45s ease;
+  will-change: opacity, transform;
+}
+.out{opacity:0;transform:translateY(10px)}
+.in{opacity:1;transform:none}
+
+@media (prefers-reduced-motion:reduce){
+  .fade{transition:none}
+}
 </style>
 </head>
 
 <body>
-<div class="frame">
-  <section class="panel">
-    <div class="header">
-      <div class="h-left">
-        <div class="iconBadge"><span class="material-icons-outlined">newspaper</span></div>
-        <div class="title">NOTÍCIAS</div>
-      </div>
-      <div class="h-right"><div class="clock" id="clock">--:--</div></div>
-    </div>
+<div class="screen">
 
-    <div class="subbar">
-      <div class="subbarLeft" id="subLeft">MANCHETE ATUAL</div>
-      <div class="pill"><span class="dot" id="dot"></span><span id="statusText">Online</span></div>
-    </div>
+<header class="topbar">
+  <div class="brand">
+    <div class="brandIcon"><span class="material-icons-outlined">newspaper</span></div>
+    <div class="brandTitle">Notícias</div>
+  </div>
 
-    <div class="hero noimg" id="hero">
-      <img id="image" alt="Imagem da notícia" />
-      <div class="overlay"></div>
-      <div class="content">
-        <div class="headline" id="title">Carregando…</div>
-      </div>
-    </div>
+  <div class="sourceChip" title="Fonte da notícia">
+    <span class="sourceDot"><img id="favicon" alt=""></span>
+    <span class="sourceText" id="sourceText">Fonte da notícia</span>
+  </div>
+</header>
 
-    <div class="footer">
-      <div class="footerLeft">
-        <span class="siteBubble"><img id="favicon" alt="" /></span>
-        <div class="footMeta" id="footMeta">FONTE • —</div>
-      </div>
-      <div class="footerRight">
-        <img src="./assets/logo-pontoview.png" alt="PontoView"/>
-      </div>
-    </div>
+<main class="stage">
+  <section class="left fade in" id="textWrap">
+    <h1 class="headline" id="title">Carregando…</h1>
+    <p class="desc" id="desc"></p>
   </section>
+
+  <section class="right noimg fade in" id="mediaWrap">
+    <img id="image" alt="">
+  </section>
+</main>
+
+<footer class="footer">
+  <img src="./assets/logo-pontoview.png" alt="PontoView">
+</footer>
+
 </div>
 
 <script>
-/* ===== CONFIG (compatível com pv-news-v6) ===== */
+/* ================= CONFIG ================= */
 const WORKER_BASE = "https://pontoview-api.pedrhc258.workers.dev/api/news";
 
-const SAFE = 1;            // 1 = sala de espera (leve)
-const LIMIT = 20;          // igual ao worker default
-const TTL_HOURS = 6;
-const MAX_AGE_HOURS = 72;
-const MAX_PER_SOURCE = 5;
+/* Rotação */
+const ROTATE_MS = 12000;     // tempo entre notícias
+const TRANSITION_MS = 450;   // deve bater com CSS
 
-const UI_ROTATE_MS = 45000; // coloque 0 se não quiser rodar
+/* Regras de “priorizar manchete + imagem” */
+const DESC_MAX_CHARS = 420;       // texto é cortado nesse limite
+const DESC_LONG_THRESHOLD = 260;  // se passar disso, escondemos a descrição
+const DESC_MIN_WORDS = 12;        // se muito curto, mantém
 
-/* ===== CLOCK ===== */
-const clock = document.getElementById("clock");
-function tickClock(){
-  clock.textContent = new Date().toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"});
-}
-tickClock(); setInterval(tickClock, 1000);
-
-/* ===== ONLINE ===== */
-const statusText = document.getElementById("statusText");
-const dot = document.getElementById("dot");
-function updateStatus(){
-  if(navigator.onLine){ statusText.textContent="Online"; dot.classList.remove("off"); }
-  else{ statusText.textContent="Offline"; dot.classList.add("off"); }
-}
-updateStatus();
-addEventListener("online", updateStatus);
-addEventListener("offline", updateStatus);
-
-/* ===== HELPERS ===== */
-function host(u){ try{return new URL(u).hostname.replace(/^www\./,"");}catch{return""} }
+/* ================= HELPERS ================= */
+function host(u){ try{ return new URL(u).hostname.replace(/^www\./,""); }catch{ return ""; } }
 function favicon(u){
-  try{ return "https://www.google.com/s2/favicons?domain=" + new URL(u).hostname + "&sz=64"; }
+  try{ return "https://www.google.com/s2/favicons?domain="+new URL(u).hostname+"&sz=64"; }
   catch{ return ""; }
 }
 function imgProxy(u){
@@ -258,110 +316,130 @@ function imgProxy(u){
   return "https://images.weserv.nl/?url=" + encodeURIComponent(url.replace(/^https?:\/\//i,""))
     + "&w=1600&h=900&fit=cover&output=webp";
 }
-function fmtPub(d){
-  if(!d) return "—";
-  const t = new Date(d);
-  if(Number.isNaN(t.getTime())) return "—";
-  return t.toLocaleString("pt-BR");
+function cleanText(t){
+  if(!t) return "";
+  return String(t)
+    .replace(/<[^>]*>/g,"")     // remove HTML
+    .replace(/\s+/g," ")        // normaliza espaços
+    .replace(/📲|👉|🔗/g,"")     // remove emojis comuns de feed
+    .trim();
+}
+function wordCount(t){
+  if(!t) return 0;
+  return t.trim().split(/\s+/).filter(Boolean).length;
+}
+function ellipsis(t, max){
+  if(!t) return "";
+  if(t.length <= max) return t;
+  return t.slice(0, max).replace(/\s+\S*$/,"").trim() + "…";
 }
 
-function buildApiUrl(){
-  const params = new URLSearchParams({
-    safe: String(SAFE),
-    limit: String(LIMIT),
-    ttlHours: String(TTL_HOURS),
-    maxAgeHours: String(MAX_AGE_HOURS),
-    maxPerSource: String(MAX_PER_SOURCE),
-    seed: "1",
-    _: String(Date.now()) // cache-buster
-  });
-  return `${WORKER_BASE}?${params.toString()}`;
-}
-
-/* ===== UI refs ===== */
-const hero = document.getElementById("hero");
+/* ================= UI ================= */
 const titleEl = document.getElementById("title");
-const imgEl = document.getElementById("image");
-const favEl = document.getElementById("favicon");
-const metaEl = document.getElementById("footMeta");
-const subLeft = document.getElementById("subLeft");
+const descEl  = document.getElementById("desc");
+const imgEl   = document.getElementById("image");
+const media   = document.getElementById("mediaWrap");
+const text    = document.getElementById("textWrap");
+const favEl   = document.getElementById("favicon");
+const sourceText = document.getElementById("sourceText");
 
-/* ===== DATA ===== */
+/* ================= STATE ================= */
 let NEWS = [];
 let idx = 0;
 let timer = null;
 
-function renderOne(it){
-  titleEl.textContent = it.title || "Notícia";
-  subLeft.textContent = "MANCHETE ATUAL";
+/* ================= TRANSITION ================= */
+function showOut(){ text.classList.add("out"); media.classList.add("out"); }
+function showIn(){  text.classList.remove("out"); media.classList.remove("out"); }
 
-  const prox = imgProxy(it.image);
-  if(prox){
-    imgEl.src = prox;
-    hero.classList.remove("noimg");
+/* ================= RENDER ================= */
+function applyPriorityMode(description){
+  // Se o texto for longo: esconde descrição (prioriza manchete + imagem)
+  const wc = wordCount(description);
+  const isLong = (description.length >= DESC_LONG_THRESHOLD && wc >= DESC_MIN_WORDS);
+
+  if(isLong){
+    descEl.classList.add("is-collapsed");
+  }else{
+    descEl.classList.remove("is-collapsed");
+  }
+}
+
+function render(it){
+  const title = cleanText(it.title || "Notícia");
+  const descRaw = cleanText(it.description || it.summary || "");
+
+  titleEl.textContent = ellipsis(title, 160); // corte defensivo p/ evitar títulos absurdos
+  const desc = ellipsis(descRaw, DESC_MAX_CHARS);
+  descEl.textContent = desc;
+
+  applyPriorityMode(descRaw);
+
+  const h = host(it.link);
+  sourceText.textContent = (h || "Fonte").toUpperCase();
+
+  const fav = favicon(it.link);
+  if(fav){
+    favEl.src = fav;
+    favEl.parentElement.style.display = "grid";
+  }else{
+    favEl.parentElement.style.display = "none";
+  }
+
+  const img = imgProxy(it.image);
+  if(img){
+    imgEl.src = img;
+    media.classList.remove("noimg");
     imgEl.onerror = () => {
-      hero.classList.add("noimg");
+      media.classList.add("noimg");
       imgEl.removeAttribute("src");
       imgEl.onerror = null;
     };
   }else{
-    hero.classList.add("noimg");
+    media.classList.add("noimg");
     imgEl.removeAttribute("src");
     imgEl.onerror = null;
   }
-
-  const fav = favicon(it.link);
-  if(fav){ favEl.src = fav; favEl.style.display="block"; }
-  else { favEl.style.display="none"; }
-
-  metaEl.textContent = `${host(it.link).toUpperCase() || "PONTOVIEW"} • ${fmtPub(it.pubDate)}`;
 }
 
-function renderCurrent(){
+function step(){
   if(!NEWS.length) return;
-  const it = NEWS[idx % NEWS.length];
-  idx++;
-  renderOne(it);
+  showOut();
+  setTimeout(()=>{
+    render(NEWS[idx++ % NEWS.length]);
+    showIn();
+  }, TRANSITION_MS);
 }
 
-async function refresh(){
+/* ================= LOAD ================= */
+async function load(){
   try{
-    const url = buildApiUrl();
-    const res = await fetch(url, { cache:"no-store" });
+    const res = await fetch(WORKER_BASE, { cache:"no-store" });
     const j = await res.json();
-
-    if(j?.warmingUp){
-      // mostra placeholder, tenta de novo em alguns segundos
-      NEWS = (j.items || []);
-      idx = 0;
-      renderCurrent();
-      setTimeout(refresh, 7000);
-      return;
-    }
-
     NEWS = (j.items || []).filter(x => x && x.title);
-    if(!NEWS.length) throw new Error("Sem items");
+    if(!NEWS.length) throw new Error("Sem itens");
 
     idx = Math.floor(Math.random() * NEWS.length);
-    renderCurrent();
+    render(NEWS[idx++]);
+    showIn();
 
     if(timer) clearInterval(timer);
-    if(UI_ROTATE_MS && UI_ROTATE_MS >= 3000){
-      timer = setInterval(renderCurrent, UI_ROTATE_MS);
-    }
+    timer = setInterval(step, ROTATE_MS);
   }catch(e){
     console.error(e);
     titleEl.textContent = "Sem notícias no momento";
-    metaEl.textContent = "PONTOVIEW • —";
-    favEl.style.display = "none";
-    hero.classList.add("noimg");
+    descEl.textContent = "";
+    descEl.classList.add("is-collapsed");
+    sourceText.textContent = "PONTO VIEW";
+    favEl.parentElement.style.display = "none";
+    media.classList.add("noimg");
     imgEl.removeAttribute("src");
-    setTimeout(refresh, 8000);
+    showIn();
+    setTimeout(load, 8000);
   }
 }
 
-refresh();
+load();
 </script>
-
 </body>
 </html>
