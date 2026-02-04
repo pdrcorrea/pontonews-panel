@@ -369,7 +369,7 @@ function render(it){
   const title = cleanText(it.title || "Notícia");
   const descRaw = cleanText(it.description || it.summary || "");
 
-  titleEl.textContent = ellipsis(title, 160); // corte defensivo p/ evitar títulos absurdos
+  titleEl.textContent = ellipsis(title, 230); // corte defensivo p/ evitar títulos absurdos
   const desc = ellipsis(descRaw, DESC_MAX_CHARS);
   descEl.textContent = desc;
 
