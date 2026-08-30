@@ -103,22 +103,80 @@ function extractLink(block) {
   return "";
 }
 
-function extractImage(block, description = "") {
+function resolveUrl(value, base) {
+  let url = decodeEntities(value || "").trim();
+  if (!url || /^data:/i.test(url) || /^javascript:/i.test(url)) return "";
+  try {
+    if (url.startsWith("//")) url = "https:" + url;
+    const resolved = new URL(url, base).href;
+    if (!/^https?:\/\//i.test(resolved)) return "";
+    if (/\.svg(?:[?#]|$)/i.test(resolved)) return "";
+    return resolved;
+  } catch {
+    return "";
+  }
+}
+
+function bestFromSrcset(srcset = "", base = "") {
+  const candidates = decodeEntities(srcset)
+    .split(",")
+    .map(part => part.trim())
+    .filter(Boolean)
+    .map(part => {
+      const bits = part.split(/\s+/);
+      const url = resolveUrl(bits[0], base);
+      const descriptor = bits[1] || "";
+      const width = /^(\d+)w$/i.test(descriptor) ? Number(descriptor.slice(0, -1)) : 0;
+      return { url, width };
+    })
+    .filter(x => x.url);
+  candidates.sort((a,b) => b.width - a.width);
+  return candidates[0]?.url || "";
+}
+
+function extractImage(block, baseUrl = "") {
   const mediaTags = block.match(/<(?:media:content|media:thumbnail)\b[^>]*>/gi) || [];
   for (const tag of mediaTags) {
-    const url = attr(tag, "url");
     const type = attr(tag, "type");
-    if (url && (!type || type.startsWith("image/"))) return url;
+    const medium = attr(tag, "medium");
+    const url = resolveUrl(attr(tag, "url"), baseUrl);
+    if (url && (!type || type.startsWith("image/") || medium === "image")) return url;
   }
+
   const enclosureTags = block.match(/<enclosure\b[^>]*>/gi) || [];
   for (const tag of enclosureTags) {
-    const url = attr(tag, "url");
     const type = attr(tag, "type");
+    const url = resolveUrl(attr(tag, "url"), baseUrl);
     if (url && (!type || type.startsWith("image/"))) return url;
   }
-  const html = decodeEntities(description || firstTag(block, ["content:encoded", "description", "summary", "content"]));
-  const img = html.match(/<img\b[^>]*src=["']([^"']+)["']/i);
-  return img ? decodeEntities(img[1]) : "";
+
+  const htmlSources = [
+    firstTag(block, ["content:encoded"]),
+    firstTag(block, ["content"]),
+    firstTag(block, ["description"]),
+    firstTag(block, ["summary"])
+  ].filter(Boolean);
+
+  for (const html of htmlSources) {
+    const decoded = decodeEntities(html);
+    const imgTags = decoded.match(/<img\b[^>]*>/gi) || [];
+    for (const tag of imgTags) {
+      const srcset = attr(tag, "srcset") || attr(tag, "data-srcset");
+      const fromSet = bestFromSrcset(srcset, baseUrl);
+      if (fromSet) return fromSet;
+      const src = attr(tag, "src") || attr(tag, "data-src") || attr(tag, "data-lazy-src") || attr(tag, "data-original");
+      const url = resolveUrl(src, baseUrl);
+      if (url) return url;
+    }
+  }
+
+  const genericImageTags = block.match(/<(?:image|media:group)\b[\s\S]*?<\/\1>/gi) || [];
+  for (const chunk of genericImageTags) {
+    const url = resolveUrl(firstTag(chunk, ["url"]), baseUrl);
+    if (url) return url;
+  }
+
+  return "";
 }
 
 function parseDate(value) {
@@ -150,12 +208,14 @@ function parseFeed(xml, feed) {
     const rawDescription = firstTag(block, ["description", "summary", "content", "content:encoded"]);
     const link = extractLink(block);
     const pubDate = parseDate(firstTag(block, ["pubDate", "published", "updated", "dc:date"]));
+    const image = extractImage(block, link || feed.url);
     return {
       title: stripHtml(rawTitle),
       description: stripHtml(rawDescription),
       link,
       pubDate,
-      image: extractImage(block, rawDescription),
+      image,
+      hasImage: Boolean(image),
       source: feed.name,
       sourceDomain: (() => {
         try { return new URL(link || feed.url).hostname.replace(/^www\./, ""); }
@@ -172,7 +232,7 @@ async function fetchWithTimeout(url, timeoutMs = FETCH_TIMEOUT_MS) {
     const response = await fetch(url, {
       signal: ctrl.signal,
       headers: {
-        "user-agent": "PontoView-RSS/1.1 (+https://pontoview.com.br)",
+        "user-agent": "PontoView-RSS/1.2 (+https://pontoview.com.br)",
         "accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, */*"
       },
       cf: { cacheTtl: 300, cacheEverything: true }
@@ -210,9 +270,10 @@ async function buildNewsResponse() {
     const feed = FEEDS[index];
     if (result.status === "fulfilled") {
       items.push(...result.value.items);
-      feeds.push({ name:feed.name, url:feed.url, ok:true, items:result.value.items.length });
+      const withImages = result.value.items.filter(item => item.hasImage).length;
+      feeds.push({ name:feed.name, url:feed.url, ok:true, items:result.value.items.length, withImages });
     } else {
-      feeds.push({ name:feed.name, url:feed.url, ok:false, items:0 });
+      feeds.push({ name:feed.name, url:feed.url, ok:false, items:0, withImages:0 });
     }
   });
 
@@ -221,6 +282,7 @@ async function buildNewsResponse() {
     ok: news.length > 0,
     generatedAt: new Date().toISOString(),
     count: news.length,
+    withImages: news.filter(item => item.hasImage).length,
     filtering: { heavyContent:true, maxAgeHours:MAX_AGE_HOURS },
     feeds,
     items: news
@@ -243,7 +305,7 @@ export default {
     }
 
     if (url.pathname === "/health") {
-      return json({ ok:true, service:"PontoView News RSS Worker", feeds:FEEDS.length, heavyFilter:true });
+      return json({ ok:true, service:"PontoView News RSS Worker", feeds:FEEDS.length, heavyFilter:true, imageExtraction:"media+enclosure+content+lazy-src+srcset" });
     }
 
     return json({ ok:true, service:"PontoView News RSS Worker", endpoints:["/api/news", "/health"] });
