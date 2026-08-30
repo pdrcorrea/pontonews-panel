@@ -14,8 +14,6 @@
   --pv-sky:#69cff2;
   --white:#f7fbff;
   --soft:rgba(247,251,255,.72);
-  --faint:rgba(247,251,255,.45);
-  --panel:rgba(255,255,255,.075);
   --line:rgba(255,255,255,.14);
   --safe:clamp(24px,3.4vw,58px);
   --radius:clamp(24px,2.4vw,36px);
@@ -37,16 +35,16 @@ body{margin:0;overflow:hidden;font-family:Inter,system-ui,-apple-system,BlinkMac
 .brand{display:flex;align-items:center;gap:15px;min-width:0}
 .brandIcon{width:clamp(50px,4vw,66px);height:clamp(50px,4vw,66px);object-fit:contain;display:block;flex:0 0 auto;animation:markPulse 6s ease-in-out infinite}
 .brandTitle{font-size:clamp(28px,2.55vw,44px);font-weight:650;line-height:1;letter-spacing:-.025em}
-.sourceChip{display:flex;align-items:center;gap:10px;min-width:0;max-width:44vw;padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.07);border:1px solid var(--line)}
-.sourceDot{width:24px;height:24px;border-radius:50%;background:#fff;display:grid;place-items:center;overflow:hidden;flex:0 0 auto}
-.sourceDot img{width:16px;height:16px;object-fit:contain;display:block}
-.sourceText{font-size:clamp(10px,.82vw,13px);font-weight:650;letter-spacing:.09em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--soft)}
+.sourceChip{display:flex;align-items:center;gap:12px;min-width:0;max-width:44vw;padding:9px 16px 9px 11px;border-radius:999px;background:rgba(255,255,255,.065);border:1px solid var(--line);transition:opacity .46s var(--ease),transform .46s var(--ease),filter .46s var(--ease)}
+.sourceMark{width:36px;height:36px;display:grid;place-items:center;flex:0 0 auto}
+.sourceMark img{width:30px;height:30px;object-fit:contain;display:block;filter:drop-shadow(0 3px 8px rgba(0,0,0,.16))}
+.sourceText{font-size:clamp(11px,.88vw,14px);font-weight:650;letter-spacing:.075em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:rgba(247,251,255,.80)}
 .stage{min-height:0;display:grid;grid-template-columns:minmax(0,56%) minmax(0,44%);gap:clamp(28px,3.3vw,54px);align-items:stretch}
-.copy{min-width:0;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(12px,1.5vw,22px) 0}
+.copy{min-width:0;min-height:0;display:flex;flex-direction:column;justify-content:center;padding:clamp(12px,1.5vw,22px) 0;transform-origin:center left}
 .category{margin:0 0 clamp(18px,2.2vh,28px);font-size:clamp(11px,.9vw,14px);font-weight:650;letter-spacing:.14em;text-transform:uppercase;color:var(--pv-sky)}
 .headline{margin:0;font-size:clamp(34px,4.5vw,74px);font-weight:650;line-height:1.04;letter-spacing:-.045em;text-wrap:balance;overflow:visible}
 .desc{margin:clamp(20px,2.5vh,30px) 0 0;font-size:clamp(15px,1.27vw,20px);line-height:1.48;color:var(--soft);max-width:64ch}
-.media{min-width:0;min-height:0;position:relative;overflow:hidden;border-radius:var(--radius);background:linear-gradient(145deg,rgba(105,207,242,.16),rgba(255,255,255,.035));border:1px solid var(--line)}
+.media{min-width:0;min-height:0;position:relative;overflow:hidden;border-radius:var(--radius);background:linear-gradient(145deg,rgba(105,207,242,.16),rgba(255,255,255,.035));border:1px solid var(--line);transform-origin:center right}
 .mediaFrame{position:absolute;inset:0;overflow:hidden}
 .media img.newsImage{width:100%;height:100%;object-fit:cover;display:block;animation:imageBreath 13s ease-in-out infinite}
 .media::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,42,97,.01),rgba(3,42,97,.38));pointer-events:none}
@@ -67,31 +65,38 @@ body{margin:0;overflow:hidden;font-family:Inter,system-ui,-apple-system,BlinkMac
 .progressFill{height:100%;width:0;background:linear-gradient(90deg,var(--pv-sky),rgba(255,255,255,.9));transform-origin:left}
 .footer{display:flex;align-items:center;justify-content:center;min-height:30px}
 .logo{height:clamp(22px,2vw,31px);width:auto;display:block;filter:brightness(0) invert(1);opacity:.90}
-.fade{transition:opacity .52s var(--ease),transform .52s var(--ease),filter .52s var(--ease)}
-.out{opacity:0;transform:translateY(10px);filter:blur(2px)}
-.in{opacity:1;transform:none;filter:none}
-@media (orientation:landscape) and (max-height:760px){.screen{padding-top:20px;padding-bottom:16px;gap:15px}.brandIcon{width:48px;height:48px}.brandTitle{font-size:30px}.stage{grid-template-columns:minmax(0,58%) minmax(0,42%);gap:30px}.headline{font-size:clamp(30px,3.9vw,56px)}.desc{font-size:14px;margin-top:14px}.category{margin-bottom:14px}.qrCode{width:58px;height:58px}}
+.copy,.media{transition:opacity .54s var(--ease),transform .54s var(--ease),filter .54s var(--ease)}
+.screen.is-leaving .copy{opacity:0;transform:translate3d(-24px,0,0) scale(.992);filter:blur(3px)}
+.screen.is-leaving .media{opacity:0;transform:translate3d(22px,0,0) scale(.982);filter:blur(2px)}
+.screen.is-leaving .sourceChip{opacity:0;transform:translateY(-8px);filter:blur(2px)}
+.screen.is-entering .copy{animation:copyIn .64s var(--ease) both}
+.screen.is-entering .media{animation:mediaIn .72s var(--ease) both}
+.screen.is-entering .sourceChip{animation:sourceIn .54s var(--ease) both}
+@keyframes copyIn{from{opacity:0;transform:translate3d(22px,0,0);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
+@keyframes mediaIn{from{opacity:0;transform:translate3d(28px,0,0) scale(.975);filter:blur(3px)}to{opacity:1;transform:none;filter:none}}
+@keyframes sourceIn{from{opacity:0;transform:translateY(-7px);filter:blur(2px)}to{opacity:1;transform:none;filter:none}}
+@media (orientation:landscape) and (max-height:760px){.screen{padding-top:20px;padding-bottom:16px;gap:15px}.brandIcon{width:48px;height:48px}.brandTitle{font-size:30px}.stage{grid-template-columns:minmax(0,58%) minmax(0,42%);gap:30px}.headline{font-size:clamp(30px,3.9vw,56px)}.desc{font-size:14px;margin-top:14px}.category{margin-bottom:14px}.qrCode{width:58px;height:58px}.sourceMark{width:32px;height:32px}.sourceMark img{width:28px;height:28px}}
 @media (orientation:portrait),(max-aspect-ratio:4/5){.screen{padding:clamp(28px,5vw,54px) clamp(24px,5vw,52px) clamp(22px,4vw,42px);gap:clamp(24px,2.8vh,36px)}.sourceChip{max-width:48vw}.stage{grid-template-columns:1fr;grid-template-rows:minmax(0,52%) minmax(0,48%);gap:clamp(22px,2.7vh,34px)}.copy{padding:0}.headline{font-size:clamp(34px,7vw,66px)}.desc{font-size:clamp(15px,2.5vw,20px)}.qrCode{width:74px;height:74px}}
-@media (orientation:portrait) and (max-width:620px){.brandIcon{width:46px;height:46px}.brandTitle{font-size:28px}.sourceChip{max-width:45vw;padding:8px 10px}.sourceDot{display:none!important}.headline{font-size:34px}.desc{font-size:14px}.stage{grid-template-rows:auto minmax(260px,1fr)}.qrCopy{display:none}.qrCard{padding:8px}.qrCode{width:64px;height:64px}}
-@media (prefers-reduced-motion:reduce){.ambient,.ambient::before,.ambient::after,.brandIcon,.media img.newsImage{animation:none!important}.fade{transition:none}}
+@media (orientation:portrait) and (max-width:620px){.brandIcon{width:46px;height:46px}.brandTitle{font-size:28px}.sourceChip{max-width:46vw;padding:7px 10px}.sourceMark{width:30px;height:30px}.sourceMark img{width:27px;height:27px}.headline{font-size:34px}.desc{font-size:14px}.stage{grid-template-rows:auto minmax(260px,1fr)}.qrCopy{display:none}.qrCard{padding:8px}.qrCode{width:64px;height:64px}}
+@media (prefers-reduced-motion:reduce){.ambient,.ambient::before,.ambient::after,.brandIcon,.media img.newsImage{animation:none!important}.copy,.media,.sourceChip{transition:none!important}.screen.is-entering .copy,.screen.is-entering .media,.screen.is-entering .sourceChip{animation:none!important}}
 </style>
 </head>
 <body>
 <div class="ambient" aria-hidden="true"></div>
-<div class="screen">
+<div class="screen" id="screen">
   <header class="topbar">
     <div class="brand"><img class="brandIcon" src="assets/icon.png" alt="" aria-hidden="true"><div class="brandTitle">Notícias</div></div>
-    <div class="sourceChip" title="Fonte da notícia"><span class="sourceDot"><img id="favicon" alt=""></span><span class="sourceText" id="sourceText">Fonte</span></div>
+    <div class="sourceChip" title="Fonte da notícia"><span class="sourceMark"><img id="favicon" alt=""></span><span class="sourceText" id="sourceText">Fonte</span></div>
   </header>
 
   <main class="stage">
-    <section class="copy fade in" id="textWrap">
+    <section class="copy" id="textWrap">
       <div class="category" id="category">Em destaque</div>
       <h1 class="headline" id="title">Carregando notícias…</h1>
       <p class="desc" id="desc"></p>
     </section>
 
-    <section class="media noimg fade in" id="mediaWrap">
+    <section class="media noimg" id="mediaWrap">
       <div class="mediaFrame">
         <img class="newsImage" id="image" alt="">
         <div class="fallbackMark"><img src="assets/icon.png" alt=""></div>
@@ -109,19 +114,20 @@ body{margin:0;overflow:hidden;font-family:Inter,system-ui,-apple-system,BlinkMac
 
 <script>
 const WORKER_BASE="https://pontoview-api.pedrhc258.workers.dev/api/news";
-const TRANSITION_MS=520;
+const TRANSITION_MS=560;
 const READ_MIN_MS=22000;
 const READ_MAX_MS=34000;
 const RELOAD_MS=10*60*1000;
 
 function cleanText(t){return String(t||"").replace(/<[^>]*>/g,"").replace(/\s+/g," ").replace(/📲|👉|🔗/g,"").trim()}
-function favicon(u){try{return"https://www.google.com/s2/favicons?domain="+new URL(u).hostname+"&sz=64"}catch{return""}}
+function favicon(u){try{return"https://www.google.com/s2/favicons?domain="+new URL(u).hostname+"&sz=128"}catch{return""}}
 function normalizeImageUrl(u){if(!u)return"";let url=String(u).trim();if(url.startsWith("//"))url="https:"+url;return /^https?:\/\//i.test(url)?url:""}
 function imgProxy(u){const url=normalizeImageUrl(u);if(!url)return"";return"https://images.weserv.nl/?url="+encodeURIComponent(url.replace(/^https?:\/\//i,""))+"&w=1600&h=1200&fit=cover&output=webp"}
 function qrUrl(link){return link?"https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=0&data="+encodeURIComponent(link):""}
 function words(t){return cleanText(t).split(/\s+/).filter(Boolean).length}
 function readingTime(item){const count=words((item.title||"")+" "+(item.description||item.summary||""));return Math.min(READ_MAX_MS,Math.max(READ_MIN_MS,READ_MIN_MS+Math.max(0,count-22)*190))}
 
+const screen=document.getElementById("screen");
 const titleEl=document.getElementById("title");
 const descEl=document.getElementById("desc");
 const categoryEl=document.getElementById("category");
@@ -141,9 +147,6 @@ let progressFrame=null;
 let slideStart=0;
 let slideDuration=READ_MIN_MS;
 let imageLoadToken=0;
-
-function showOut(){text.classList.add("out");media.classList.add("out")}
-function showIn(){text.classList.remove("out");media.classList.remove("out")}
 
 function fitHeadline(){
   const min=28;
@@ -175,10 +178,8 @@ function loadNewsImage(rawUrl){
   const token=++imageLoadToken;
   const original=normalizeImageUrl(rawUrl);
   if(!original){showImageFallback();return}
-
   const candidates=[imgProxy(original),original].filter((v,i,a)=>v&&a.indexOf(v)===i);
   let attempt=0;
-
   const tryNext=()=>{
     if(token!==imageLoadToken)return;
     if(attempt>=candidates.length){showImageFallback();return}
@@ -188,11 +189,13 @@ function loadNewsImage(rawUrl){
       media.classList.remove("noimg");
       imageEl.onload=null;
       imageEl.onerror=null;
+      imageEl.style.animation="none";
+      void imageEl.offsetWidth;
+      imageEl.style.animation="";
     };
     imageEl.onerror=()=>tryNext();
     imageEl.src=candidate;
   };
-
   tryNext();
 }
 
@@ -206,7 +209,11 @@ function render(item){
 
   sourceText.textContent=item.source||"Fonte";
   const fav=favicon(item.link);
-  if(fav){faviconEl.src=fav;faviconEl.parentElement.style.display="grid"}else faviconEl.parentElement.style.display="none";
+  if(fav){
+    faviconEl.src=fav;
+    faviconEl.parentElement.style.display="grid";
+    faviconEl.onerror=()=>{faviconEl.parentElement.style.display="none";faviconEl.onerror=null};
+  }else faviconEl.parentElement.style.display="none";
 
   loadNewsImage(item.image);
 
@@ -224,7 +231,25 @@ function render(item){
 
 function animateProgress(now){const p=Math.min(1,(now-slideStart)/slideDuration);progressFill.style.width=(p*100)+"%";if(p<1)progressFrame=requestAnimationFrame(animateProgress)}
 function schedule(item){clearTimeout(nextTimer);if(progressFrame)cancelAnimationFrame(progressFrame);slideDuration=readingTime(item);slideStart=performance.now();progressFill.style.width="0%";progressFrame=requestAnimationFrame(animateProgress);nextTimer=setTimeout(step,slideDuration)}
-function step(){if(!NEWS.length)return;showOut();setTimeout(()=>{const item=NEWS[idx++%NEWS.length];render(item);showIn();schedule(item)},TRANSITION_MS)}
+
+function animateIn(){
+  screen.classList.remove("is-leaving");
+  screen.classList.remove("is-entering");
+  void screen.offsetWidth;
+  screen.classList.add("is-entering");
+  setTimeout(()=>screen.classList.remove("is-entering"),760);
+}
+
+function step(){
+  if(!NEWS.length)return;
+  screen.classList.add("is-leaving");
+  setTimeout(()=>{
+    const item=NEWS[idx++%NEWS.length];
+    render(item);
+    animateIn();
+    schedule(item);
+  },TRANSITION_MS);
+}
 
 async function load(){
   try{
@@ -236,7 +261,9 @@ async function load(){
     NEWS=items;
     idx=Math.floor(Math.random()*NEWS.length);
     const first=NEWS[idx++%NEWS.length];
-    render(first);showIn();schedule(first);
+    render(first);
+    animateIn();
+    schedule(first);
   }catch(e){
     titleEl.textContent="Novas notícias em breve";
     descEl.style.display="none";
@@ -245,6 +272,7 @@ async function load(){
     faviconEl.parentElement.style.display="none";
     showImageFallback();
     qrCard.classList.add("hidden");
+    animateIn();
     setTimeout(load,10000);
   }
 }
