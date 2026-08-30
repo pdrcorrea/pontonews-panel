@@ -4,441 +4,234 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>PontoView • Notícias</title>
-
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;600;800;900&display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons+Outlined" rel="stylesheet"/>
-
 <style>
 :root{
-  --blue1:#3a78a7;
-  --blue2:#0f3b5e;
-
-  --bg:#ffffff;
-  --ink:#0b1320;
-  --muted:rgba(11,19,32,.55);
-  --line:rgba(11,19,32,.10);
-
-  --safe:clamp(16px,2.4vw,36px);
-
-  /* Cabeçalho maior */
-  --barH:clamp(76px,9vh,104px);
-
-  /* Manchete equilibrada para TV */
-  --t-title:clamp(26px,3.3vw,54px);
-  --t-desc:clamp(15px,1.55vw,22px);
-  --t-chip:clamp(12px,1.05vw,16px);
-
-  --radius:clamp(18px,2.4vw,32px);
+  --pv-blue:#08479a;
+  --pv-blue-deep:#032a61;
+  --pv-sky:#69cff2;
+  --pv-white:#f7fbff;
+  --pv-soft:rgba(247,251,255,.72);
+  --pv-faint:rgba(247,251,255,.46);
+  --panel:rgba(255,255,255,.08);
+  --line:rgba(255,255,255,.14);
+  --bg-top:#0a4ea5;
+  --bg-bottom:#043775;
+  --safe:clamp(24px,3.4vw,58px);
+  --radius:clamp(22px,2.2vw,34px);
+  --ease:cubic-bezier(.22,1,.36,1);
 }
-
 *{box-sizing:border-box}
-html,body{height:100%}
-
+html,body{width:100%;height:100%}
 body{
   margin:0;
-  font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;
-  background:var(--bg);
-  color:var(--ink);
   overflow:hidden;
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  color:var(--pv-white);
+  background:linear-gradient(145deg,var(--bg-top),var(--bg-bottom));
 }
-
+.ambient,.ambient::before,.ambient::after{position:fixed;pointer-events:none;content:"";z-index:0}
+.ambient{
+  inset:-18%;
+  background:
+    radial-gradient(circle at 16% 20%,rgba(105,207,242,.22) 0 8%,transparent 30%),
+    radial-gradient(circle at 84% 30%,rgba(255,255,255,.08) 0 8%,transparent 30%),
+    radial-gradient(circle at 64% 84%,rgba(105,207,242,.11) 0 10%,transparent 34%);
+  animation:ambientFloat 24s ease-in-out infinite alternate;
+}
+.ambient::before{
+  width:min(40vw,640px);aspect-ratio:1;right:-11vw;top:-14vw;
+  border:clamp(12px,1.2vw,22px) solid rgba(105,207,242,.10);
+  border-left-color:transparent;border-bottom-color:transparent;border-radius:50%;
+  animation:ring 38s linear infinite;
+}
+.ambient::after{
+  width:min(30vw,500px);aspect-ratio:1;left:-9vw;bottom:-13vw;
+  border:clamp(9px,.9vw,16px) solid rgba(255,255,255,.06);
+  border-top-color:transparent;border-right-color:transparent;border-radius:50%;
+  animation:ring 46s linear infinite reverse;
+}
+@keyframes ambientFloat{from{transform:translate3d(-1.5%,0,0) scale(1)}to{transform:translate3d(1.5%,-1%,0) scale(1.03)}}
+@keyframes ring{to{transform:rotate(360deg)}}
+@keyframes imageBreath{50%{transform:scale(1.025)}}
 .screen{
-  width:100vw;
-  height:100vh;
-  display:flex;
-  flex-direction:column;
-}
-
-/* ================= CABEÇALHO ================= */
-.topbar{
-  height:var(--barH);
-  padding:0 var(--safe);
-  display:flex;
-  align-items:center;
-  justify-content:space-between;
-  gap:20px;
-  background:linear-gradient(180deg,var(--blue1),var(--blue2));
-  color:#fff;
-  border-bottom:1px solid rgba(255,255,255,.18);
-}
-
-.brand{
-  display:flex;
-  align-items:center;
-  gap:14px;
-  min-width:0;
-}
-
-.brandIcon{
-  width:clamp(46px,5.8vh,64px);
-  height:clamp(46px,5.8vh,64px);
-  border-radius:14px;
-  display:grid;
-  place-items:center;
-  background:rgba(255,255,255,.12);
-  border:1px solid rgba(255,255,255,.22);
-  box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
-  flex:0 0 auto;
-}
-
-.brandIcon span{
-  font-size:clamp(22px,2.4vh,30px);
-}
-
-.brandTitle{
-  font-weight:900;
-  letter-spacing:.14em;
-  text-transform:uppercase;
-  font-size:clamp(18px,2.2vw,30px);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-.sourceChip{
-  display:flex;
-  align-items:center;
-  gap:10px;
-  padding:10px 16px;
-  border-radius:999px;
-  background:rgba(255,255,255,.18);
-  border:1px solid rgba(255,255,255,.22);
-  max-width:50vw;
-  min-width:180px;
-}
-
-.sourceDot{
-  width:22px;
-  height:22px;
-  border-radius:999px;
-  background:#fff;
-  display:grid;
-  place-items:center;
-  overflow:hidden;
-  flex:0 0 auto;
-}
-
-.sourceDot img{
-  width:16px;
-  height:16px;
-  object-fit:contain;
-  display:block;
-}
-
-.sourceText{
-  font-weight:900;
-  letter-spacing:.08em;
-  text-transform:uppercase;
-  font-size:var(--t-chip);
-  white-space:nowrap;
-  overflow:hidden;
-  text-overflow:ellipsis;
-}
-
-/* ================= CONTEÚDO ================= */
-.stage{
-  flex:1;
+  position:relative;z-index:1;width:100%;height:100%;
   padding:var(--safe);
   display:grid;
-  grid-template-columns:1.1fr .9fr;
-  gap:clamp(20px,3vw,48px);
-  align-items:center;
-  min-height:0;
+  grid-template-rows:auto minmax(0,1fr) auto;
+  gap:clamp(20px,2.4vh,34px);
 }
-
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:24px;min-width:0}
+.brand{display:flex;align-items:center;gap:15px;min-width:0}
+.brandMark{
+  width:clamp(48px,4vw,64px);height:clamp(48px,4vw,64px);border-radius:18px;
+  display:grid;place-items:center;background:rgba(255,255,255,.08);border:1px solid var(--line);flex:0 0 auto;
+}
+.brandMark .material-icons-outlined{font-size:clamp(26px,2.5vw,36px);color:var(--pv-sky)}
+.brandText{min-width:0}
+.eyebrow{font-size:clamp(11px,.9vw,14px);font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--pv-sky);margin-bottom:6px}
+.brandTitle{font-size:clamp(26px,2.5vw,42px);font-weight:650;line-height:1;letter-spacing:-.02em}
+.sourceChip{
+  display:flex;align-items:center;gap:10px;min-width:0;max-width:46vw;
+  padding:10px 14px;border-radius:999px;background:rgba(255,255,255,.08);border:1px solid var(--line)
+}
+.sourceDot{width:24px;height:24px;border-radius:50%;background:#fff;display:grid;place-items:center;overflow:hidden;flex:0 0 auto}
+.sourceDot img{width:16px;height:16px;object-fit:contain;display:block}
+.sourceText{font-size:clamp(10px,.85vw,13px);font-weight:650;letter-spacing:.10em;text-transform:uppercase;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--pv-soft)}
+.stage{
+  min-height:0;display:grid;grid-template-columns:minmax(0,55%) minmax(0,45%);gap:clamp(24px,3vw,48px);align-items:stretch
+}
 .left{
-  min-width:0;
+  min-width:0;min-height:0;display:flex;flex-direction:column;justify-content:center;
+  padding:clamp(18px,2.2vw,28px) 0;
 }
-
+.kicker{display:flex;align-items:center;gap:9px;margin-bottom:clamp(18px,2.4vh,30px);font-size:clamp(11px,.9vw,14px);font-weight:650;letter-spacing:.14em;text-transform:uppercase;color:var(--pv-sky)}
+.kicker .material-icons-outlined{font-size:1.35em}
 .headline{
-  font-size:var(--t-title);
-  font-weight:900;
-  line-height:1.10;
-  margin:0 0 18px 0;
-
-  /* limite de linhas p/ não explodir layout */
-  display:-webkit-box;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:3; /* máx 3 linhas */
-  overflow:hidden;
+  margin:0;font-size:clamp(42px,4.7vw,76px);font-weight:650;line-height:1.03;letter-spacing:-.045em;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:4;overflow:hidden;text-wrap:balance;
 }
-
 .desc{
-  font-size:var(--t-desc);
-  line-height:1.5;
-  color:var(--muted);
-  max-width:60ch;
-  margin:0;
-
-  /* limite padrão de linhas */
-  display:-webkit-box;
-  -webkit-box-orient:vertical;
-  -webkit-line-clamp:6;
-  overflow:hidden;
+  margin:clamp(20px,2.4vh,30px) 0 0;font-size:clamp(16px,1.35vw,21px);line-height:1.48;color:var(--pv-soft);max-width:65ch;
+  display:-webkit-box;-webkit-box-orient:vertical;-webkit-line-clamp:5;overflow:hidden;
 }
-
-/* Quando o texto é longo => prioriza manchete + imagem */
-.desc.is-collapsed{
-  display:none !important;
-}
-
-/* ================= IMAGEM (RSS) ================= */
+.desc.is-collapsed{display:none!important}
 .right{
-  position:relative;
-  border-radius:var(--radius);
-  overflow:hidden;
-  background:linear-gradient(180deg,var(--blue1),var(--blue2));
-  min-height:clamp(240px,44vh,620px);
-  box-shadow:0 22px 70px rgba(2,10,23,.16);
+  min-width:0;min-height:0;border-radius:var(--radius);overflow:hidden;position:relative;
+  background:linear-gradient(145deg,rgba(105,207,242,.16),rgba(255,255,255,.04));
+  border:1px solid var(--line);
 }
-
-.right img{
-  position:absolute;
-  inset:0;
-  width:100%;
-  height:100%;
-  object-fit:cover;
-  opacity:1;
+.mediaFrame{position:absolute;inset:0;overflow:hidden}
+.right img{width:100%;height:100%;object-fit:cover;display:block;animation:imageBreath 12s ease-in-out infinite}
+.right::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(3,42,97,.02),rgba(3,42,97,.28));pointer-events:none}
+.right.noimg::before{
+  content:"newspaper";position:absolute;inset:0;display:grid;place-items:center;font-family:'Material Icons Outlined';
+  font-size:clamp(110px,12vw,190px);color:rgba(105,207,242,.45)
 }
-
-.right::after{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.18));
-}
-
 .right.noimg img{display:none}
-.right.noimg::after{
-  background:
-    radial-gradient(800px 500px at 30% 30%,rgba(255,255,255,.20),transparent 60%),
-    linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.22));
+.metaBar{
+  position:absolute;left:18px;right:18px;bottom:18px;z-index:2;
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
 }
-
-/* ================= RODAPÉ ================= */
-.footer{
-  padding:10px var(--safe);
-  border-top:1px solid var(--line);
-  display:flex;
-  justify-content:flex-end;
-  align-items:center;
+.metaPill{padding:9px 12px;border-radius:999px;background:rgba(3,42,97,.64);border:1px solid rgba(255,255,255,.14);font-size:10px;letter-spacing:.10em;text-transform:uppercase;color:rgba(255,255,255,.78);backdrop-filter:blur(8px)}
+.footer{display:grid;grid-template-columns:1fr auto 1fr;align-items:center;gap:16px;color:var(--pv-faint);font-size:9px;letter-spacing:.12em;text-transform:uppercase}
+.footer>:last-child{text-align:right}
+.footer img{height:clamp(22px,2vw,30px);width:auto;display:block;filter:brightness(0) invert(1);opacity:.88}
+.fade{transition:opacity .5s var(--ease),transform .5s var(--ease),filter .5s var(--ease)}
+.out{opacity:0;transform:translateY(10px);filter:blur(2px)}
+.in{opacity:1;transform:none;filter:none}
+@media (orientation:landscape) and (max-height:760px){
+  .screen{padding-top:20px;padding-bottom:16px;gap:14px}
+  .brandTitle{font-size:30px}.stage{grid-template-columns:minmax(0,58%) minmax(0,42%);gap:30px}
+  .headline{font-size:clamp(34px,4vw,58px)}.desc{font-size:15px;margin-top:16px}.kicker{margin-bottom:16px}
 }
-
-.footer img{
-  height:clamp(16px,2.4vh,22px);
-  opacity:.55;
+@media (orientation:portrait), (max-aspect-ratio:4/5){
+  .screen{padding:clamp(28px,5vw,54px) clamp(24px,5vw,52px) clamp(22px,4vw,42px);gap:clamp(24px,2.8vh,36px)}
+  .topbar{align-items:center}.sourceChip{max-width:52vw}
+  .stage{grid-template-columns:1fr;grid-template-rows:minmax(0,52%) minmax(0,48%);gap:clamp(22px,2.6vh,34px)}
+  .left{padding:0;justify-content:center}.headline{font-size:clamp(42px,7.4vw,68px)}.desc{font-size:clamp(16px,2.6vw,21px)}
+  .footer{font-size:clamp(7px,1.2vw,10px)}
 }
-
-/* ================= RESPONSIVO VERTICAL ================= */
-@media (orientation:portrait){
-  .stage{
-    grid-template-columns:1fr;
-    grid-template-rows:auto 1fr;
-    align-items:stretch;
-  }
-  .right{
-    min-height:clamp(220px,36vh,520px);
-  }
-  .sourceChip{ max-width:60vw; }
+@media (orientation:portrait) and (max-width:620px){
+  .brandMark{display:none}.eyebrow{font-size:10px}.brandTitle{font-size:28px}.sourceChip{max-width:46vw;min-width:0;padding:8px 10px}.sourceDot{display:none!important}
+  .headline{font-size:36px}.desc{font-size:15px}.stage{grid-template-rows:auto minmax(260px,1fr)}
+  .footer{grid-template-columns:1fr auto}.footer>:last-child{display:none}
 }
-
-/* ================= TRANSIÇÃO ================= */
-.fade{
-  transition:opacity .45s ease, transform .45s ease;
-  will-change: opacity, transform;
-}
-.out{opacity:0;transform:translateY(10px)}
-.in{opacity:1;transform:none}
-
-@media (prefers-reduced-motion:reduce){
-  .fade{transition:none}
-}
+@media (prefers-reduced-motion:reduce){.ambient,.ambient::before,.ambient::after,.right img{animation:none!important}.fade{transition:none}}
 </style>
 </head>
-
 <body>
+<div class="ambient" aria-hidden="true"></div>
 <div class="screen">
-
-<header class="topbar">
-  <div class="brand">
-    <div class="brandIcon"><span class="material-icons-outlined">newspaper</span></div>
-    <div class="brandTitle">Notícias</div>
-  </div>
-
-  <div class="sourceChip" title="Fonte da notícia">
-    <span class="sourceDot"><img id="favicon" alt=""></span>
-    <span class="sourceText" id="sourceText">Fonte da notícia</span>
-  </div>
-</header>
-
-<main class="stage">
-  <section class="left fade in" id="textWrap">
-    <h1 class="headline" id="title">Carregando…</h1>
-    <p class="desc" id="desc"></p>
-  </section>
-
-  <section class="right noimg fade in" id="mediaWrap">
-    <img id="image" alt="">
-  </section>
-</main>
-
-<footer class="footer">
-  <img src="./assets/logo-pontoview.png" alt="PontoView">
-</footer>
-
+  <header class="topbar">
+    <div class="brand">
+      <div class="brandMark" aria-hidden="true"><span class="material-icons-outlined">newspaper</span></div>
+      <div class="brandText"><div class="eyebrow">PontoView informa</div><div class="brandTitle">Notícias</div></div>
+    </div>
+    <div class="sourceChip" title="Fonte da notícia">
+      <span class="sourceDot"><img id="favicon" alt=""></span>
+      <span class="sourceText" id="sourceText">Fonte da notícia</span>
+    </div>
+  </header>
+  <main class="stage">
+    <section class="left fade in" id="textWrap">
+      <div class="kicker"><span class="material-icons-outlined">feed</span><span>Em destaque</span></div>
+      <h1 class="headline" id="title">Carregando…</h1>
+      <p class="desc" id="desc"></p>
+    </section>
+    <section class="right noimg fade in" id="mediaWrap">
+      <div class="mediaFrame"><img id="image" alt=""></div>
+      <div class="metaBar"><span class="metaPill" id="sourceMeta">Fonte</span><span class="metaPill">RSS</span></div>
+    </section>
+  </main>
+  <footer class="footer">
+    <span>Atualização automática</span>
+    <img src="./assets/logo-pontoview.png" alt="PontoView">
+    <span>Conteúdo via feed RSS</span>
+  </footer>
 </div>
-
 <script>
-/* ================= CONFIG ================= */
-const WORKER_BASE = "https://pontoview-api.pedrhc258.workers.dev/api/news";
-
-/* Rotação */
-const ROTATE_MS = 12000;     // tempo entre notícias
-const TRANSITION_MS = 450;   // deve bater com CSS
-
-/* Regras de “priorizar manchete + imagem” */
-const DESC_MAX_CHARS = 420;       // texto é cortado nesse limite
-const DESC_LONG_THRESHOLD = 260;  // se passar disso, escondemos a descrição
-const DESC_MIN_WORDS = 12;        // se muito curto, mantém
-
-/* ================= HELPERS ================= */
-function host(u){ try{ return new URL(u).hostname.replace(/^www\./,""); }catch{ return ""; } }
-function favicon(u){
-  try{ return "https://www.google.com/s2/favicons?domain="+new URL(u).hostname+"&sz=64"; }
-  catch{ return ""; }
-}
-function imgProxy(u){
-  if(!u) return "";
-  let url = String(u).trim();
-  if(!url) return "";
-  if(url.startsWith("//")) url = "https:" + url;
-  if(!/^https?:\/\//i.test(url)) return "";
-  return "https://images.weserv.nl/?url=" + encodeURIComponent(url.replace(/^https?:\/\//i,""))
-    + "&w=1600&h=900&fit=cover&output=webp";
-}
-function cleanText(t){
-  if(!t) return "";
-  return String(t)
-    .replace(/<[^>]*>/g,"")     // remove HTML
-    .replace(/\s+/g," ")        // normaliza espaços
-    .replace(/📲|👉|🔗/g,"")     // remove emojis comuns de feed
-    .trim();
-}
-function wordCount(t){
-  if(!t) return 0;
-  return t.trim().split(/\s+/).filter(Boolean).length;
-}
-function ellipsis(t, max){
-  if(!t) return "";
-  if(t.length <= max) return t;
-  return t.slice(0, max).replace(/\s+\S*$/,"").trim() + "…";
-}
-
-/* ================= UI ================= */
-const titleEl = document.getElementById("title");
-const descEl  = document.getElementById("desc");
-const imgEl   = document.getElementById("image");
-const media   = document.getElementById("mediaWrap");
-const text    = document.getElementById("textWrap");
-const favEl   = document.getElementById("favicon");
-const sourceText = document.getElementById("sourceText");
-
-/* ================= STATE ================= */
-let NEWS = [];
-let idx = 0;
-let timer = null;
-
-/* ================= TRANSITION ================= */
-function showOut(){ text.classList.add("out"); media.classList.add("out"); }
-function showIn(){  text.classList.remove("out"); media.classList.remove("out"); }
-
-/* ================= RENDER ================= */
-function applyPriorityMode(description){
-  // Se o texto for longo: esconde descrição (prioriza manchete + imagem)
-  const wc = wordCount(description);
-  const isLong = (description.length >= DESC_LONG_THRESHOLD && wc >= DESC_MIN_WORDS);
-
-  if(isLong){
-    descEl.classList.add("is-collapsed");
-  }else{
-    descEl.classList.remove("is-collapsed");
-  }
-}
-
+const WORKER_BASE="https://pontoview-api.pedrhc258.workers.dev/api/news";
+const ROTATE_MS=12000;
+const TRANSITION_MS=500;
+const DESC_MAX_CHARS=420;
+const DESC_LONG_THRESHOLD=300;
+const DESC_MIN_WORDS=16;
+function host(u){try{return new URL(u).hostname.replace(/^www\./,"")}catch{return""}}
+function favicon(u){try{return"https://www.google.com/s2/favicons?domain="+new URL(u).hostname+"&sz=64"}catch{return""}}
+function imgProxy(u){if(!u)return"";let url=String(u).trim();if(!url)return"";if(url.startsWith("//"))url="https:"+url;if(!/^https?:\/\//i.test(url))return"";return"https://images.weserv.nl/?url="+encodeURIComponent(url.replace(/^https?:\/\//i,""))+"&w=1600&h=1200&fit=cover&output=webp"}
+function cleanText(t){if(!t)return"";return String(t).replace(/<[^>]*>/g,"").replace(/\s+/g," ").replace(/📲|👉|🔗/g,"").trim()}
+function wordCount(t){return t?t.trim().split(/\s+/).filter(Boolean).length:0}
+function ellipsis(t,max){if(!t)return"";if(t.length<=max)return t;return t.slice(0,max).replace(/\s+\S*$/,"").trim()+"…"}
+const titleEl=document.getElementById("title");
+const descEl=document.getElementById("desc");
+const imgEl=document.getElementById("image");
+const media=document.getElementById("mediaWrap");
+const text=document.getElementById("textWrap");
+const favEl=document.getElementById("favicon");
+const sourceText=document.getElementById("sourceText");
+const sourceMeta=document.getElementById("sourceMeta");
+let NEWS=[];let idx=0;let timer=null;
+function showOut(){text.classList.add("out");media.classList.add("out")}
+function showIn(){text.classList.remove("out");media.classList.remove("out")}
+function applyPriorityMode(description){const wc=wordCount(description);const isLong=description.length>=DESC_LONG_THRESHOLD&&wc>=DESC_MIN_WORDS;descEl.classList.toggle("is-collapsed",isLong)}
 function render(it){
-  const title = cleanText(it.title || "Notícia");
-  const descRaw = cleanText(it.description || it.summary || "");
-
-  titleEl.textContent = ellipsis(title, 400); // corte defensivo p/ evitar títulos absurdos
-  const desc = ellipsis(descRaw, DESC_MAX_CHARS);
-  descEl.textContent = desc;
-
+  const title=cleanText(it.title||"Notícia");
+  const descRaw=cleanText(it.description||it.summary||"");
+  titleEl.textContent=ellipsis(title,420);
+  const desc=ellipsis(descRaw,DESC_MAX_CHARS);
+  descEl.textContent=desc;
   applyPriorityMode(descRaw);
-
-  const h = host(it.link);
-  sourceText.textContent = (h || "Fonte").toUpperCase();
-
-  const fav = favicon(it.link);
-  if(fav){
-    favEl.src = fav;
-    favEl.parentElement.style.display = "grid";
-  }else{
-    favEl.parentElement.style.display = "none";
-  }
-
-  const img = imgProxy(it.image);
+  const h=host(it.link)||"Fonte";
+  sourceText.textContent=h.toUpperCase();
+  sourceMeta.textContent=h.toUpperCase();
+  const fav=favicon(it.link);
+  if(fav){favEl.src=fav;favEl.parentElement.style.display="grid"}else{favEl.parentElement.style.display="none"}
+  const img=imgProxy(it.image);
   if(img){
-    imgEl.src = img;
-    media.classList.remove("noimg");
-    imgEl.onerror = () => {
-      media.classList.add("noimg");
-      imgEl.removeAttribute("src");
-      imgEl.onerror = null;
-    };
-  }else{
-    media.classList.add("noimg");
-    imgEl.removeAttribute("src");
-    imgEl.onerror = null;
-  }
+    imgEl.src=img;media.classList.remove("noimg");
+    imgEl.onerror=()=>{media.classList.add("noimg");imgEl.removeAttribute("src");imgEl.onerror=null};
+  }else{media.classList.add("noimg");imgEl.removeAttribute("src");imgEl.onerror=null}
 }
-
-function step(){
-  if(!NEWS.length) return;
-  showOut();
-  setTimeout(()=>{
-    render(NEWS[idx++ % NEWS.length]);
-    showIn();
-  }, TRANSITION_MS);
-}
-
-/* ================= LOAD ================= */
+function step(){if(!NEWS.length)return;showOut();setTimeout(()=>{render(NEWS[idx++%NEWS.length]);showIn()},TRANSITION_MS)}
 async function load(){
   try{
-    const res = await fetch(WORKER_BASE, { cache:"no-store" });
-    const j = await res.json();
-    NEWS = (j.items || []).filter(x => x && x.title);
-    if(!NEWS.length) throw new Error("Sem itens");
-
-    idx = Math.floor(Math.random() * NEWS.length);
-    render(NEWS[idx++]);
-    showIn();
-
-    if(timer) clearInterval(timer);
-    timer = setInterval(step, ROTATE_MS);
+    const res=await fetch(WORKER_BASE,{cache:"no-store"});
+    const j=await res.json();
+    NEWS=(j.items||[]).filter(x=>x&&x.title);
+    if(!NEWS.length)throw new Error("Sem itens");
+    idx=Math.floor(Math.random()*NEWS.length);
+    render(NEWS[idx++]);showIn();
+    if(timer)clearInterval(timer);timer=setInterval(step,ROTATE_MS);
   }catch(e){
     console.error(e);
-    titleEl.textContent = "Sem notícias no momento";
-    descEl.textContent = "";
-    descEl.classList.add("is-collapsed");
-    sourceText.textContent = "PONTO VIEW";
-    favEl.parentElement.style.display = "none";
-    media.classList.add("noimg");
-    imgEl.removeAttribute("src");
-    showIn();
-    setTimeout(load, 8000);
+    titleEl.textContent="Sem notícias no momento";
+    descEl.textContent="";descEl.classList.add("is-collapsed");
+    sourceText.textContent="PONTOVIEW";sourceMeta.textContent="PONTOVIEW";
+    favEl.parentElement.style.display="none";media.classList.add("noimg");imgEl.removeAttribute("src");showIn();setTimeout(load,8000);
   }
 }
-
 load();
 </script>
 </body>
