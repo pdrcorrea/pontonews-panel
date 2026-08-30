@@ -1,21 +1,49 @@
 const FEEDS = [
-  { name: "G1", url: "https://g1.globo.com/rss/g1/" },
-  { name: "G1 Espírito Santo", url: "https://g1.globo.com/dynamo/espirito-santo/rss2.xml" },
-  { name: "Agência Brasil", url: "https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml" },
-  { name: "Agência Brasil • Economia", url: "https://agenciabrasil.ebc.com.br/rss/economia/feed.xml" },
-  { name: "Agência Brasil • Educação", url: "https://agenciabrasil.ebc.com.br/rss/educacao/feed.xml" },
-  { name: "Agência Brasil • Saúde", url: "https://agenciabrasil.ebc.com.br/rss/saude/feed.xml" },
-  { name: "Agência Brasil • Esportes", url: "https://agenciabrasil.ebc.com.br/rss/esportes/feed.xml" },
-  { name: "BBC News Brasil", url: "https://feeds.bbci.co.uk/portuguese/rss.xml" },
-  { name: "CNN Brasil", url: "https://www.cnnbrasil.com.br/feed/" },
-  { name: "Poder360", url: "https://www.poder360.com.br/feed/" },
-  { name: "DW Brasil", url: "https://rss.dw.com/rdf/rss-br-all" }
+  {
+    name: "G1",
+    home: "https://g1.globo.com/",
+    urls: [
+      "https://g1.globo.com/rss/g1/",
+      "https://g1.globo.com/dynamo/rss2.xml"
+    ]
+  },
+  { name: "G1 • Espírito Santo", home: "https://g1.globo.com/es/espirito-santo/", urls: ["https://g1.globo.com/dynamo/espirito-santo/rss2.xml"] },
+  { name: "G1 • Economia", home: "https://g1.globo.com/economia/", urls: ["https://g1.globo.com/rss/g1/economia", "https://g1.globo.com/dynamo/economia/rss2.xml"] },
+  { name: "G1 • Educação", home: "https://g1.globo.com/educacao/", urls: ["https://g1.globo.com/rss/g1/educacao", "https://g1.globo.com/dynamo/educacao/rss2.xml"] },
+  { name: "G1 • Ciência e Saúde", home: "https://g1.globo.com/ciencia-e-saude/", urls: ["https://g1.globo.com/rss/g1/ciencia-e-saude"] },
+  { name: "G1 • Mundo", home: "https://g1.globo.com/mundo/", urls: ["https://g1.globo.com/rss/g1/mundo", "https://g1.globo.com/dynamo/mundo/rss2.xml"] },
+  { name: "G1 • Turismo", home: "https://g1.globo.com/turismo-e-viagem/", urls: ["https://g1.globo.com/rss/g1/turismo-e-viagem", "https://g1.globo.com/dynamo/turismo-e-viagem/rss2.xml"] },
+
+  { name: "UOL", home: "https://www.uol.com.br/", urls: ["https://rss.home.uol.com.br/index.xml", "http://rss.home.uol.com.br/index.xml"] },
+  { name: "Folha de S.Paulo", home: "https://www.folha.uol.com.br/", urls: ["https://feeds.folha.uol.com.br/emcimadahora/rss091.xml"] },
+  {
+    name: "Estadão",
+    home: "https://www.estadao.com.br/",
+    urls: [
+      "https://www.estadao.com.br/arc/outboundfeeds/rss/?outputType=xml",
+      "https://www.estadao.com.br/rss/ultimas.xml",
+      "http://www.estadao.com.br/rss/ultimas.xml"
+    ]
+  },
+  { name: "R7 Notícias", home: "https://noticias.r7.com/", urls: ["https://noticias.r7.com/feed.xml"] },
+  { name: "CNN Brasil", home: "https://www.cnnbrasil.com.br/", urls: ["https://www.cnnbrasil.com.br/feed/"] },
+  { name: "Poder360", home: "https://www.poder360.com.br/", urls: ["https://www.poder360.com.br/feed/"] },
+  { name: "DW Brasil", home: "https://www.dw.com/pt-br/", urls: ["https://rss.dw.com/rdf/rss-br-all"] },
+  { name: "BBC News Brasil", home: "https://www.bbc.com/portuguese", urls: ["https://feeds.bbci.co.uk/portuguese/rss.xml"] },
+  { name: "Agência Brasil", home: "https://agenciabrasil.ebc.com.br/", urls: ["https://agenciabrasil.ebc.com.br/rss/ultimasnoticias/feed.xml"] },
+  { name: "Agência Brasil • Economia", home: "https://agenciabrasil.ebc.com.br/economia", urls: ["https://agenciabrasil.ebc.com.br/rss/economia/feed.xml"] },
+  { name: "Agência Brasil • Educação", home: "https://agenciabrasil.ebc.com.br/educacao", urls: ["https://agenciabrasil.ebc.com.br/rss/educacao/feed.xml"] },
+  { name: "Agência Brasil • Saúde", home: "https://agenciabrasil.ebc.com.br/saude", urls: ["https://agenciabrasil.ebc.com.br/rss/saude/feed.xml"] },
+  { name: "Agência Brasil • Esportes", home: "https://agenciabrasil.ebc.com.br/esportes", urls: ["https://agenciabrasil.ebc.com.br/rss/esportes/feed.xml"] },
+  { name: "InfoMoney", home: "https://www.infomoney.com.br/", urls: ["https://www.infomoney.com.br/feed/"] },
+  { name: "Jornal de Brasília", home: "https://jornaldebrasilia.com.br/", urls: ["https://jornaldebrasilia.com.br/feed/"] }
 ];
 
-const MAX_ITEMS_PER_FEED = 16;
-const MAX_OUTPUT_ITEMS = 64;
-const FETCH_TIMEOUT_MS = 8500;
-const MAX_AGE_HOURS = 72;
+const MAX_ITEMS_PER_FEED = 18;
+const MAX_OUTPUT_ITEMS = 90;
+const MAX_PER_SOURCE = 12;
+const FETCH_TIMEOUT_MS = 9000;
+const MAX_AGE_HOURS = 96;
 
 const HEAVY_HARD_BLOCK = [
   "estupro", "violência sexual", "abuso sexual", "pedofilia", "pornografia infantil",
@@ -92,15 +120,18 @@ function attr(tag, name) {
 }
 
 function extractLink(block) {
-  const direct = firstTag(block, ["link"]);
-  if (/^https?:\/\//i.test(stripHtml(direct))) return stripHtml(direct);
+  const direct = stripHtml(firstTag(block, ["link"]));
+  if (/^https?:\/\//i.test(direct)) return direct;
+
   const atomLinks = block.match(/<link\b[^>]*>/gi) || [];
   for (const tag of atomLinks) {
     const href = attr(tag, "href");
     const rel = attr(tag, "rel");
     if (href && (!rel || rel === "alternate")) return href;
   }
-  return "";
+
+  const guid = stripHtml(firstTag(block, ["guid", "id"]));
+  return /^https?:\/\//i.test(guid) ? guid : "";
 }
 
 function resolveUrl(value, base) {
@@ -170,12 +201,6 @@ function extractImage(block, baseUrl = "") {
     }
   }
 
-  const genericImageTags = block.match(/<(?:image|media:group)\b[\s\S]*?<\/\1>/gi) || [];
-  for (const chunk of genericImageTags) {
-    const url = resolveUrl(firstTag(chunk, ["url"]), baseUrl);
-    if (url) return url;
-  }
-
   return "";
 }
 
@@ -194,11 +219,12 @@ function isHeavyNews(item) {
 
 function isRecent(item) {
   if (!item.pubDate) return true;
-  const age = Date.now() - Date.parse(item.pubDate);
-  return !Number.isFinite(age) || age <= MAX_AGE_HOURS * 60 * 60 * 1000;
+  const time = Date.parse(item.pubDate);
+  if (!Number.isFinite(time)) return true;
+  return Date.now() - time <= MAX_AGE_HOURS * 60 * 60 * 1000;
 }
 
-function parseFeed(xml, feed) {
+function parseFeed(xml, feed, usedUrl) {
   const itemBlocks = xml.match(/<item\b[\s\S]*?<\/item>/gi) || [];
   const entryBlocks = xml.match(/<entry\b[\s\S]*?<\/entry>/gi) || [];
   const blocks = itemBlocks.length ? itemBlocks : entryBlocks;
@@ -208,21 +234,25 @@ function parseFeed(xml, feed) {
     const rawDescription = firstTag(block, ["description", "summary", "content", "content:encoded"]);
     const link = extractLink(block);
     const pubDate = parseDate(firstTag(block, ["pubDate", "published", "updated", "dc:date"]));
-    const image = extractImage(block, link || feed.url);
+    const image = extractImage(block, link || feed.home || usedUrl);
+    const sourceDomain = (() => {
+      try { return new URL(link || feed.home || usedUrl).hostname.replace(/^www\./, ""); }
+      catch { return ""; }
+    })();
+
     return {
       title: stripHtml(rawTitle),
       description: stripHtml(rawDescription),
       link,
+      hasLink: Boolean(link),
       pubDate,
       image,
       hasImage: Boolean(image),
       source: feed.name,
-      sourceDomain: (() => {
-        try { return new URL(link || feed.url).hostname.replace(/^www\./, ""); }
-        catch { return feed.name; }
-      })()
+      sourceHome: feed.home || "",
+      sourceDomain
     };
-  }).filter(item => item.title && item.link && isRecent(item) && !isHeavyNews(item));
+  }).filter(item => item.title && isRecent(item) && !isHeavyNews(item));
 }
 
 async function fetchWithTimeout(url, timeoutMs = FETCH_TIMEOUT_MS) {
@@ -231,8 +261,9 @@ async function fetchWithTimeout(url, timeoutMs = FETCH_TIMEOUT_MS) {
   try {
     const response = await fetch(url, {
       signal: ctrl.signal,
+      redirect: "follow",
       headers: {
-        "user-agent": "PontoView-RSS/1.2 (+https://pontoview.com.br)",
+        "user-agent": "PontoView-RSS/2.0 (+https://pontoview.com.br)",
         "accept": "application/rss+xml, application/atom+xml, application/xml, text/xml, */*"
       },
       cf: { cacheTtl: 300, cacheEverything: true }
@@ -244,46 +275,94 @@ async function fetchWithTimeout(url, timeoutMs = FETCH_TIMEOUT_MS) {
   }
 }
 
-function dedupeAndSort(items) {
-  const seen = new Set();
+async function fetchFeed(feed) {
+  const errors = [];
+  for (const url of feed.urls) {
+    try {
+      const xml = await fetchWithTimeout(url);
+      const items = parseFeed(xml, feed, url);
+      if (items.length) return { items, usedUrl:url, errors };
+      errors.push(`${url}: sem itens válidos`);
+    } catch (error) {
+      errors.push(`${url}: ${error instanceof Error ? error.message : "falha"}`);
+    }
+  }
+  return { items:[], usedUrl:feed.urls[0], errors };
+}
+
+function dedupe(items) {
+  const seenLinks = new Set();
+  const seenTitles = new Set();
   const out = [];
+
   for (const item of items) {
     const canonical = (item.link || "").replace(/[?#].*$/, "").toLowerCase();
-    const titleKey = normalize(item.title).replace(/[^a-z0-9 ]/g, "").slice(0, 110);
-    const key = canonical || titleKey;
-    if (!key || seen.has(key)) continue;
-    seen.add(key);
+    const titleKey = normalize(item.title).replace(/[^a-z0-9 ]/g, "").replace(/\s+/g, " ").trim().slice(0, 140);
+    if (canonical && seenLinks.has(canonical)) continue;
+    if (titleKey && seenTitles.has(titleKey)) continue;
+    if (canonical) seenLinks.add(canonical);
+    if (titleKey) seenTitles.add(titleKey);
     out.push(item);
   }
-  return out.sort((a,b) => (Date.parse(b.pubDate || 0) || 0) - (Date.parse(a.pubDate || 0) || 0)).slice(0, MAX_OUTPUT_ITEMS);
+  return out;
+}
+
+function balancedSort(items) {
+  const sorted = [...items].sort((a,b) => (Date.parse(b.pubDate || 0) || 0) - (Date.parse(a.pubDate || 0) || 0));
+  const groups = new Map();
+
+  for (const item of sorted) {
+    if (!groups.has(item.source)) groups.set(item.source, []);
+    const group = groups.get(item.source);
+    if (group.length < MAX_PER_SOURCE) group.push(item);
+  }
+
+  const queues = [...groups.values()].filter(q => q.length);
+  const out = [];
+  while (queues.length && out.length < MAX_OUTPUT_ITEMS) {
+    queues.sort((a,b) => (Date.parse(b[0]?.pubDate || 0) || 0) - (Date.parse(a[0]?.pubDate || 0) || 0));
+    for (let i = 0; i < queues.length && out.length < MAX_OUTPUT_ITEMS; i++) {
+      const item = queues[i].shift();
+      if (item) out.push(item);
+    }
+    for (let i = queues.length - 1; i >= 0; i--) if (!queues[i].length) queues.splice(i, 1);
+  }
+  return out;
 }
 
 async function buildNewsResponse() {
-  const results = await Promise.allSettled(FEEDS.map(async feed => {
-    const xml = await fetchWithTimeout(feed.url);
-    return { feed, items: parseFeed(xml, feed) };
-  }));
-
+  const results = await Promise.allSettled(FEEDS.map(async feed => ({ feed, ...(await fetchFeed(feed)) })));
   const items = [];
   const feeds = [];
+
   results.forEach((result, index) => {
     const feed = FEEDS[index];
     if (result.status === "fulfilled") {
-      items.push(...result.value.items);
-      const withImages = result.value.items.filter(item => item.hasImage).length;
-      feeds.push({ name:feed.name, url:feed.url, ok:true, items:result.value.items.length, withImages });
+      const feedItems = result.value.items;
+      items.push(...feedItems);
+      feeds.push({
+        name: feed.name,
+        ok: feedItems.length > 0,
+        usedUrl: result.value.usedUrl,
+        items: feedItems.length,
+        withImages: feedItems.filter(item => item.hasImage).length,
+        withLinks: feedItems.filter(item => item.hasLink).length,
+        errors: result.value.errors
+      });
     } else {
-      feeds.push({ name:feed.name, url:feed.url, ok:false, items:0, withImages:0 });
+      feeds.push({ name:feed.name, ok:false, usedUrl:feed.urls[0], items:0, withImages:0, withLinks:0, errors:["falha inesperada"] });
     }
   });
 
-  const news = dedupeAndSort(items);
+  const news = balancedSort(dedupe(items));
   return {
     ok: news.length > 0,
     generatedAt: new Date().toISOString(),
     count: news.length,
+    sources: new Set(news.map(item => item.source)).size,
     withImages: news.filter(item => item.hasImage).length,
-    filtering: { heavyContent:true, maxAgeHours:MAX_AGE_HOURS },
+    withLinks: news.filter(item => item.hasLink).length,
+    filtering: { heavyContent:true, maxAgeHours:MAX_AGE_HOURS, balancedSources:true },
     feeds,
     items: news
   };
@@ -305,7 +384,14 @@ export default {
     }
 
     if (url.pathname === "/health") {
-      return json({ ok:true, service:"PontoView News RSS Worker", feeds:FEEDS.length, heavyFilter:true, imageExtraction:"media+enclosure+content+lazy-src+srcset" });
+      return json({
+        ok:true,
+        service:"PontoView News RSS Worker",
+        feeds:FEEDS.length,
+        heavyFilter:true,
+        acceptsItemsWithoutLink:true,
+        imageExtraction:"media+enclosure+content+lazy-src+srcset"
+      });
     }
 
     return json({ ok:true, service:"PontoView News RSS Worker", endpoints:["/api/news", "/health"] });
